@@ -1,5 +1,5 @@
 # ReCheck
-AI 기반 중고 자산 관리 및 사기 방어 시스템 
+## AI 기반 중고 자산 관리 및 사기 방어 시스템 
 
 -----
 📌 Project Overview
