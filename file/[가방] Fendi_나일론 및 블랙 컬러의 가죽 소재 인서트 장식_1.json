@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    217.36842105263165,
+                    236.3157894736842
+                ],
+                [
+                    685.7894736842107,
+                    863.6842105263157
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_나일론 및 블랙 컬러의 가죽 소재 인서트 장식_1.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

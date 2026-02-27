@@ -1,0 +1,112 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    318.95096792457673,
+                    457.8284969225322
+                ],
+                [
+                    534.3730618193549,
+                    684.7556381892231
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    350.3031478368017,
+                    153.7818476700439
+                ],
+                [
+                    594.0860366561639,
+                    698.0970846732757
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    398.2780100494918,
+                    793.5322884466473
+                ],
+                [
+                    464.1711499308503,
+                    872.5105908576372
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    463.236495464448,
+                    797.2709063122563
+                ],
+                [
+                    531.8858386247168,
+                    878.1185176560507
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    438.1588251376587,
+                    114.19550502889298
+                ],
+                [
+                    448.27379117292656,
+                    127.42276830578172
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    420.03235708152704,
+                    327.662210202381
+                ],
+                [
+                    485.76115474190857,
+                    343.83898682864066
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_내추럴 컬러 가죽 쇼퍼_4.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

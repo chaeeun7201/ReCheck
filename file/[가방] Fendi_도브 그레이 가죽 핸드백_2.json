@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    53.93407761828817,
+                    331.4460393407762
+                ],
+                [
+                    762.0680489101542,
+                    856.6985645933015
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_도브 그레이 가죽 핸드백_2.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

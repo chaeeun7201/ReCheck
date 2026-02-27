@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    178.0701754385965,
+                    139.79266347687403
+                ],
+                [
+                    701.9936204146726,
+                    721.1323763955346
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 셀러리아 가죽 백_2.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

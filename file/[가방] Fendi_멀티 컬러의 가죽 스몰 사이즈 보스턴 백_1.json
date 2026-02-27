@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    23.29915507833128,
+                    137.7156310508713
+                ],
+                [
+                    176.08915683858476,
+                    215.16678401689842
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러의 가죽 스몰 사이즈 보스턴 백_1.jpg",
+    "imageWidth": 225,
+    "imageHeight": 225,
+    "imageData": null
+}

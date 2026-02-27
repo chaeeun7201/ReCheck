@@ -1,0 +1,78 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    88.05797708454988,
+                    77.29042962104823
+                ],
+                [
+                    396.11433530150623,
+                    405.46919315382434
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    174.30122462611627,
+                    0
+                ],
+                [
+                    444.0052699146129,
+                    315.00744631530773
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    87.98404223455096,
+                    400.69965260466967
+                ],
+                [
+                    259.2470830339627,
+                    658.1620905561645
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    243.59413250586056,
+                    402.93988741483065
+                ],
+                [
+                    391.8193587178489,
+                    621.748554680147
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_버건디 가죽 백_2.jpg",
+    "imageWidth": 510,
+    "imageHeight": 680,
+    "imageData": null
+}

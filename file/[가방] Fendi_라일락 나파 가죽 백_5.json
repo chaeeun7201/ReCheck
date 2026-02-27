@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    71.17224880382776,
+                    29.30622009569378
+                ],
+                [
+                    437.20095693779905,
+                    467.70334928229664
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 나파 가죽 백_5.jpg",
+    "imageWidth": 500,
+    "imageHeight": 500,
+    "imageData": null
+}

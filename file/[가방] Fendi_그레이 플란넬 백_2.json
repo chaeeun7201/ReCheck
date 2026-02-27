@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    42.924014967482044,
+                    100.36690915618472
+                ],
+                [
+                    176.53987180490807,
+                    214.82179225975423
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 플란넬 백_2.jpg",
+    "imageWidth": 224,
+    "imageHeight": 224,
+    "imageData": null
+}

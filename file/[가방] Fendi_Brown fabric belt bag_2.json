@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    167.47769699941,
+                    578.2300407266404
+                ],
+                [
+                    744.2350899807662,
+                    857.0597737573623
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_Brown fabric belt bag_2.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

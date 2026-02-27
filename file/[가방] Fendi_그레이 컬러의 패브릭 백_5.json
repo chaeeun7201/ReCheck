@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    41.51386098834874,
+                    27.31806615776081
+                ],
+                [
+                    141.42011517342974,
+                    217.7559930360252
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    58.65595285924736,
+                    9.64028391589661
+                ],
+                [
+                    188.56086781840094,
+                    224.0
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 컬러의 패브릭 백_5.jpg",
+    "imageWidth": 224,
+    "imageHeight": 224,
+    "imageData": null
+}

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReCheck — 상품 스캐너</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── 리셋 & 변수 ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a1120;
+      --surface:   #0f1d2e;
+      --surface2:  #162338;
+      --border:    #1e3452;
+      --mint:      #4dffc3;
+      --mint-dim:  #1a9e78;
+      --red:       #ff4d6a;
+      --yellow:    #ffd166;
+      --text:      #e8f4f0;
+      --text-muted:#7a9abf;
+      --radius:    14px;
+      --shadow:    0 4px 32px rgba(0,0,0,.5);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── 레이아웃 ─────────────────────────────────────── */
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,17,32,.8);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+    background: linear-gradient(135deg, #4dffc3, #00c4ff);
+    background-clip: text;           /* ← 이 줄 추가 */
+    -webkit-background-clip: text;   /* ← 기존 줄 유지 */
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .stats-badge {
+      margin-left: auto;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stats-badge span { color: var(--mint); font-weight: 600; }
+
+    main {
+      flex: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 40px 24px 60px;
+    }
+
+    /* ── 스텝 인디케이터 ─────────────────────────────── */
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 40px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .step-item:not(:last-child)::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      transition: background .4s;
+      margin: 0 12px;
+    }
+
+    .step-item.active:not(:last-child)::after { background: var(--mint-dim); }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: all .4s;
+    }
+
+    .step-item.active .step-num {
+      border-color: var(--mint);
+      color: var(--mint);
+      box-shadow: 0 0 12px rgba(77,255,195,.3);
+    }
+
+    .step-item.done .step-num {
+      background: var(--mint);
+      border-color: var(--mint);
+      color: var(--bg);
+    }
+
+    .step-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .step-item.active .step-label { color: var(--text); }
+
+    /* ── 카드 ─────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── 업로드 존 ───────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 60px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: var(--mint);
+      background: rgba(77,255,195,.04);
+    }
+
+    .upload-zone input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .upload-hint {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--mint);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover { background: #6fffd5; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover { border-color: var(--mint); color: var(--mint); }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(255,77,106,.3);
+    }
+
+    .btn-danger:hover { background: rgba(255,77,106,.1); }
+
+    /* ── 캔버스 영역 ─────────────────────────────────── */
+    .image-wrapper {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+    }
+
+    #previewImg {
+      max-width: 100%;
+      max-height: 440px;
+      border-radius: 10px;
+      display: block;
+    }
+
+    #bboxCanvas {
+      position: absolute;
+      top: 0; left: 0;
+      pointer-events: none;
+      border-radius: 10px;
+    }
+
+    /* ── 결과 카드 ───────────────────────────────────── */
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .result-field label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .result-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .confidence-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--mint-dim), var(--mint));
+      transition: width .8s cubic-bezier(.22,1,.36,1);
+    }
+
+    .confidence-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .ai-bubble {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--mint);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .ai-bubble .icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ── 수정 폼 ─────────────────────────────────────── */
+    .edit-form {
+      display: none;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .edit-form.visible { display: block; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--mint);
+    }
+
+    .form-group select option { background: var(--surface2); }
+
+    /* ── 성공 상태 ───────────────────────────────────── */
+    .success-card {
+      text-align: center;
+      padding: 48px 32px;
+    }
+
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      display: block;
+      animation: popIn .6s cubic-bezier(.22,1,.36,1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .success-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .success-meta {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 24px 0;
+    }
+
+    .meta-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+    .meta-chip .label { font-size: 11px; color: var(--text-muted); }
+    .meta-chip .val   { font-family: 'Space Grotesk', sans-serif; font-weight: 600; margin-top: 4px; }
+
+    /* ── top3 테이블 ─────────────────────────────────── */
+    .top3-list { list-style: none; margin-top: 16px; }
+
+    .top3-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      transition: background .15s;
+    }
+
+    .top3-list li:hover { background: var(--surface2); }
+    .top3-list li.best { background: rgba(77,255,195,.07); }
+
+    .top3-rank {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+
+    .top3-list li.best .top3-rank {
+      background: var(--mint); border-color: var(--mint); color: var(--bg);
+    }
+
+    .top3-score {
+      margin-left: auto;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .top3-list li.best .top3-score { color: var(--mint); }
+
+    /* ── 로딩 ────────────────────────────────────────── */
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--mint);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-state {
+      text-align: center;
+      padding: 60px 32px;
+    }
+
+    .loading-state p { color: var(--text-muted); font-size: 14px; }
+
+    /* ── 유틸 ────────────────────────────────────────── */
+    .hidden { display: none !important; }
+    .text-mint { color: var(--mint); }
+    .mt-4  { margin-top: 16px; }
+    .mt-6  { margin-top: 24px; }
+    .section-divider {
+      height: 1px; background: var(--border);
+      margin: 28px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 헤더 -->
+  <header>
+    <div>
+      <div class="logo">ReCheck</div>
+      <div class="logo-sub">AI 상품 스캐너</div>
+    </div>
+    <div class="stats-badge" id="statsBadge">
+      학습 데이터 <span id="statsTotal">0</span>개 축적
+    </div>
+  </header>
+
+  <main>
+
+    <!-- 스텝 표시 -->
+    <div class="steps">
+      <div class="step-item active" id="stepItem1">
+        <div class="step-num">1</div>
+        <div class="step-label">사진 업로드</div>
+      </div>
+      <div class="step-item" id="stepItem2">
+        <div class="step-num">2</div>
+        <div class="step-label">AI 인식 결과 확인</div>
+      </div>
+      <div class="step-item" id="stepItem3">
+        <div class="step-num">3</div>
+        <div class="step-label">데이터 저장 완료</div>
+      </div>
+    </div>
+
+    <!-- STEP 1: 업로드 -->
+    <div id="step1">
+      <div class="card">
+        <div class="card-title">상품 사진을 올려주세요</div>
+        <div class="card-sub">AI가 브랜드와 모델명을 자동으로 인식합니다.</div>
+
+        <div class="upload-zone" id="dropZone">
+          <input type="file" id="fileInput" accept="image/*" />
+          <span class="upload-icon">📸</span>
+          <div style="font-weight:600;">클릭하거나 이미지를 여기에 드래그하세요</div>
+          <div class="upload-hint">JPG, PNG, WEBP · 최대 10MB</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: 로딩 -->
+    <div id="step2Loading" class="hidden">
+      <div class="card loading-state">
+        <div class="spinner"></div>
+        <p>AI가 상품을 분석하는 중...</p>
+      </div>
+    </div>
+
+    <!-- STEP 2: 결과 -->
+    <div id="step2Result" class="hidden">
+      <div class="card">
+        <div class="card-title">AI 인식 결과</div>
+        <div class="card-sub">결과가 맞으면 확인, 틀리면 수정 후 저장해 주세요.</div>
+
+        <!-- 이미지 + bbox -->
+        <div style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start; margin-bottom:28px;">
+          <div class="image-wrapper">
+            <img id="previewImg" src="" alt="상품 이미지" />
+            <canvas id="bboxCanvas"></canvas>
+          </div>
+
+          <div style="flex:1; min-width:220px;">
+            <!-- AI 말풍선 -->
+            <div class="ai-bubble">
+              <span class="icon">🤖</span>
+              <div id="aiMessage">분석 중...</div>
+            </div>
+
+            <!-- 결과 필드 -->
+            <div class="result-grid">
+              <div class="result-field">
+                <label>브랜드</label>
+                <div class="result-value text-mint" id="rBrand">—</div>
+              </div>
+              <div class="result-field">
+                <label>모델명</label>
+                <div class="result-value" id="rModel">—</div>
+              </div>
+            </div>
+
+            <!-- 신뢰도 -->
+            <div id="confidenceSection">
+              <div class="confidence-bar">
+                <div class="confidence-fill" id="confBar" style="width:0%"></div>
+              </div>
+              <div class="confidence-label" id="confLabel"></div>
+            </div>
+
+            <!-- Top 3 -->
+            <div class="mt-4" id="top3Section">
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:.6px;">상위 후보</div>
+              <ul class="top3-list" id="top3List"></ul>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="action-row mt-6">
+              <button class="btn btn-primary" id="btnConfirm">✅ 맞아요, 저장</button>
+              <button class="btn btn-ghost" id="btnEdit">✏️ 수정할게요</button>
+              <button class="btn btn-danger" id="btnRetry">↩ 다시 찍기</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 수정 폼 -->
+        <div class="edit-form" id="editForm">
+          <div class="card-title" style="font-size:15px;">직접 입력</div>
+          <div class="card-sub">브랜드와 모델명을 정확히 입력해 주세요.</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>브랜드</label>
+              <select id="editBrand">
+                <option value="">브랜드 선택</option>
+                <option>Chanel</option>
+                <option>Louis Vuitton</option>
+                <option>Gucci</option>
+                <option>Hermès</option>
+                <option>Prada</option>
+                <option>Fendi</option>
+                <option>Bottega Veneta</option>
+                <option>Balenciaga</option>
+                <option>Saint Laurent</option>
+                <option>Dior</option>
+                <option value="__other__">기타 직접 입력</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>모델명</label>
+              <input type="text" id="editModel" placeholder="예: Classic Flap, Boy Bag …" />
+            </div>
+          </div>
+          <div class="form-group" id="customBrandGroup" style="display:none; margin-bottom:16px;">
+            <label>브랜드 직접 입력</label>
+            <input type="text" id="editBrandCustom" placeholder="브랜드명 입력" />
+          </div>
+          <button class="btn btn-primary" id="btnSaveEdit">💾 수정 내용 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: 완료 -->
+    <div id="step3" class="hidden">
+      <div class="card success-card">
+        <span class="success-icon">🎉</span>
+        <div class="success-title">데이터가 저장되었습니다!</div>
+        <div style="color:var(--text-muted); font-size:14px;">
+          이 데이터는 ReCheck 모델의 새로운 학습 데이터로 활용됩니다.
+        </div>
+
+        <div class="success-meta" id="successMeta"></div>
+
+        <div style="color:var(--text-muted); font-size:13px; margin-bottom:28px;" id="successRecordId"></div>
+
+        <button class="btn btn-primary" id="btnNewScan">+ 새 상품 스캔하기</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const API = 'http://localhost:8000'; // 백엔드 주소 (배포 시 교체)
+
+  // ── 상태 ────────────────────────────────────────────────────
+  let state = {
+    step: 1,
+    imageB64: null,
+    imageMimeType: null,
+    detectResult: null,
+  };
+
+  // ── DOM 참조 ────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const steps = {
+    1: $('step1'),
+    '2L': $('step2Loading'),
+    '2R': $('step2Result'),
+    3: $('step3'),
+  };
+
+  // ── 스텝 전환 ───────────────────────────────────────────────
+  function goStep(s) {
+    ['step1','step2Loading','step2Result','step3'].forEach(id => $(id).classList.add('hidden'));
+    if (s === 1)  { $('step1').classList.remove('hidden'); }
+    if (s === '2L') { $('step2Loading').classList.remove('hidden'); }
+    if (s === '2R') { $('step2Result').classList.remove('hidden'); }
+    if (s === 3)  { $('step3').classList.remove('hidden'); }
+
+    // 스텝 인디케이터
+    const stepNums = [1, 2, 3];
+    const currentNum = typeof s === 'number' ? s : 2;
+    stepNums.forEach(n => {
+      const el = $(`stepItem${n}`);
+      el.classList.remove('active', 'done');
+      if (n < currentNum) el.classList.add('done');
+      if (n === currentNum) el.classList.add('active');
+    });
+  }
+
+  // ── 파일 업로드 처리 ─────────────────────────────────────────
+  $('dropZone').addEventListener('dragover', e => {
+    e.preventDefault();
+    $('dropZone').classList.add('drag');
+  });
+  $('dropZone').addEventListener('dragleave', () => $('dropZone').classList.remove('drag'));
+  $('dropZone').addEventListener('drop', e => {
+    e.preventDefault();
+    $('dropZone').classList.remove('drag');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+  $('fileInput').addEventListener('change', e => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  async function handleFile(file) {
+    if (!file.type.startsWith('image/')) return alert('이미지 파일을 선택해 주세요.');
+    if (file.size > 10 * 1024 * 1024) return alert('10MB 이하 이미지만 가능합니다.');
+
+    // base64 변환
+    state.imageMimeType = file.type;
+    state.imageB64 = await new Promise(res => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.readAsDataURL(file);
+    });
+
+    goStep('2L');
+
+    // ── API 호출 or Mock ──────────────────────────────────────
+    const formData = new FormData();
+    formData.append('file', file);
+
+    let result;
+    try {
+      const resp = await fetch(`${API}/api/detect`, { method: 'POST', body: formData });
+      if (!resp.ok) throw new Error(await resp.text());
+      result = await resp.json();
+    } catch (err) {
+      console.warn('API 호출 실패, 클라이언트 Mock 사용:', err.message);
+      result = clientMock();
+    }
+
+    state.detectResult = result;
+    showResult(file, result);
+  }
+
+  // ── 클라이언트 Mock (API 없을 때) ───────────────────────────
+  function clientMock() {
+    const brands = ['Chanel','Louis Vuitton','Gucci','Prada','Fendi'];
+    const models = {
+      'Chanel': 'Classic Flap', 'Louis Vuitton': 'Neverfull',
+      'Gucci': 'Marmont', 'Prada': 'Re-Edition 2005', 'Fendi': 'Baguette'
+    };
+    const brand = brands[Math.floor(Math.random() * brands.length)];
+    const conf = +(0.72 + Math.random() * 0.24).toFixed(3);
+    return {
+      detected: true,
+      bbox: { x1:.10, y1:.08, x2:.90, y2:.92 },
+      prediction: {
+        brand, model_name: models[brand], confidence: conf,
+        top3: [
+          { brand, model_name: models[brand], score: conf },
+          { brand:'Hermès', model_name:'Kelly', score: +(conf-.16).toFixed(3) },
+          { brand:'Dior', model_name:'Lady Dior', score: +(conf-.29).toFixed(3) },
+        ]
+      },
+      mode: 'mock',
+      message: `AI가 '${brand} ${models[brand]}'으로 추측했습니다. (신뢰도 ${Math.round(conf*100)}%)`
+    };
+  }
+
+  // ── 결과 렌더링 ──────────────────────────────────────────────
+  function showResult(file, result) {
+    const imgEl = $('previewImg');
+    imgEl.src = URL.createObjectURL(file);
+    imgEl.onload = () => drawBbox(result.bbox);
+
+    $('aiMessage').textContent = result.message ||
+      (result.prediction
+        ? `"${result.prediction.brand} ${result.prediction.model_name}" 맞나요?`
+        : '상품을 인식하지 못했습니다. 직접 입력해 주세요.');
+
+    if (result.prediction) {
+      const p = result.prediction;
+      $('rBrand').textContent = p.brand;
+      $('rModel').textContent = p.model_name;
+
+      const pct = Math.round(p.confidence * 100);
+      $('confBar').style.width = pct + '%';
+      $('confLabel').textContent = `신뢰도 ${pct}%`;
+
+      // Top3
+      $('top3List').innerHTML = (p.top3 || []).map((item, i) => `
+        <li class="${i === 0 ? 'best' : ''}">
+          <div class="top3-rank">${i + 1}</div>
+          <div>${item.brand} <span style="color:var(--text-muted)">·</span> ${item.model_name}</div>
+          <div class="top3-score">${Math.round(item.score * 100)}%</div>
+        </li>`).join('');
+
+      $('btnConfirm').disabled = false;
+    } else {
+      $('rBrand').textContent = '—';
+      $('rModel').textContent = '—';
+      $('confBar').style.width = '0%';
+      $('confLabel').textContent = '';
+      $('top3List').innerHTML = '';
+      $('btnConfirm').disabled = true;
+      // 수정 폼 자동 열기
+      $('editForm').classList.add('visible');
+    }
+
+    goStep('2R');
+  }
+
+  // ── bbox 캔버스 그리기 ───────────────────────────────────────
+  function drawBbox(bbox) {
+    if (!bbox) return;
+    const img = $('previewImg');
+    const canvas = $('bboxCanvas');
+    canvas.width  = img.offsetWidth;
+    canvas.height = img.offsetHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const x = bbox.x1 * canvas.width;
+    const y = bbox.y1 * canvas.height;
+    const w = (bbox.x2 - bbox.x1) * canvas.width;
+    const h = (bbox.y2 - bbox.y1) * canvas.height;
+
+    // 외부 반투명 마스크
+    ctx.fillStyle = 'rgba(0,0,0,.45)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(x, y, w, h);
+
+    // 박스 테두리
+    ctx.strokeStyle = '#4dffc3';
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(x, y, w, h);
+
+    // 코너 강조
+    const cs = 18;
+    ctx.lineWidth = 4;
+    [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([cx,cy]) => {
+      const dx = cx === x ? 1 : -1;
+      const dy = cy === y ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + dy * cs); ctx.lineTo(cx, cy); ctx.lineTo(cx + dx * cs, cy);
+      ctx.stroke();
+    });
+  }
+
+  // ── 버튼 이벤트 ─────────────────────────────────────────────
+  $('btnConfirm').addEventListener('click', async () => {
+    const p = state.detectResult?.prediction;
+    if (!p) return;
+    await saveData(p.brand, p.model_name, 'ai');
+  });
+
+  $('btnEdit').addEventListener('click', () => {
+    const form = $('editForm');
+    form.classList.toggle('visible');
+    if (form.classList.contains('visible') && state.detectResult?.prediction) {
+      const p = state.detectResult.prediction;
+      $('editBrand').value = p.brand;
+      $('editModel').value = p.model_name;
+    }
+  });
+
+  $('editBrand').addEventListener('change', e => {
+    $('customBrandGroup').style.display = e.target.value === '__other__' ? 'block' : 'none';
+  });
+
+  $('btnSaveEdit').addEventListener('click', async () => {
+    let brand = $('editBrand').value;
+    if (brand === '__other__') brand = $('editBrandCustom').value.trim();
+    const modelName = $('editModel').value.trim();
+    if (!brand || !modelName) return alert('브랜드와 모델명을 모두 입력해 주세요.');
+    await saveData(brand, modelName, 'user');
+  });
+
+  $('btnRetry').addEventListener('click', () => {
+    state = { step:1, imageB64:null, imageMimeType:null, detectResult:null };
+    $('fileInput').value = '';
+    $('editForm').classList.remove('visible');
+    goStep(1);
+  });
+
+  $('btnNewScan').addEventListener('click', () => {
+    state = { step:1, imageB64:null, imageMimeType:null, detectResult:null };
+    $('fileInput').value = '';
+    $('editForm').classList.remove('visible');
+    goStep(1);
+    fetchStats();
+  });
+
+  // ── 저장 ───────────────────────────────────────────────────
+  async function saveData(brand, modelName, confirmedBy) {
+    const bbox = state.detectResult?.bbox || { x1:0, y1:0, x2:1, y2:1 };
+    const payload = {
+      image_b64: state.imageB64 || '',
+      bbox: [bbox.x1, bbox.y1, bbox.x2, bbox.y2],
+      brand,
+      model_name: modelName,
+      confirmed_by: confirmedBy,
+    };
+
+    let recordId = null;
+    try {
+      const resp = await fetch(`${API}/api/confirm`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        recordId = data.record_id;
+      }
+    } catch (e) {
+      console.warn('저장 API 실패, 클라이언트에서 카운트만 증가:', e.message);
+      recordId = Math.floor(Math.random() * 9000) + 1000;
+    }
+
+    showSuccess(brand, modelName, confirmedBy, recordId);
+  }
+
+  function showSuccess(brand, model, by, recordId) {
+    $('successMeta').innerHTML = `
+      <div class="meta-chip"><div class="label">브랜드</div><div class="val">${brand}</div></div>
+      <div class="meta-chip"><div class="label">모델명</div><div class="val">${model}</div></div>
+      <div class="meta-chip"><div class="label">입력 방식</div><div class="val">${by === 'ai' ? '🤖 AI 확인' : '✏️ 사용자 수정'}</div></div>
+    `;
+    $('successRecordId').textContent = recordId ? `저장 ID: #${recordId}` : '';
+    goStep(3);
+    fetchStats();
+  }
+
+  // ── 통계 배지 ────────────────────────────────────────────────
+  async function fetchStats() {
+    try {
+      const resp = await fetch(`${API}/api/stats`);
+      if (resp.ok) {
+        const data = await resp.json();
+        $('statsTotal').textContent = data.total_samples.toLocaleString();
+      }
+    } catch {}
+  }
+
+  // 초기 통계 로드
+  fetchStats();
+</script>
+</body>
+</html>

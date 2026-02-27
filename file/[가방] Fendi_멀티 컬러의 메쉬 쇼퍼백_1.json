@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    221.1323763955343,
+                    414.1148325358851
+                ],
+                [
+                    694.8165869218498,
+                    867.8628389154704
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러의 메쉬 쇼퍼백_1.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

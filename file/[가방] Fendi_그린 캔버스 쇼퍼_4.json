@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    16.423812087764173,
+                    82.91997577062862
+                ],
+                [
+                    210.52799838470858,
+                    215.37387266119265
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 캔버스 쇼퍼_4.jpg",
+    "imageWidth": 225,
+    "imageHeight": 225,
+    "imageData": null
+}

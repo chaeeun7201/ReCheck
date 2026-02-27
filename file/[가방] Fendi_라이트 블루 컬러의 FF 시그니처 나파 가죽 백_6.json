@@ -1,0 +1,112 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    97.22626289341444,
+                    48.032927796879136
+                ],
+                [
+                    135.31142554879662,
+                    101.45794763290135
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    90.08529489553028,
+                    37.7181962443798
+                ],
+                [
+                    144.56823591642421,
+                    122.08741073790003
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    75.80335889976197,
+                    99.07762496693996
+                ],
+                [
+                    153.56056598783388,
+                    182.9178788680243
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    69.19135149431368,
+                    181.0665167944988
+                ],
+                [
+                    104.3672308912986,
+                    220.2096006347527
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    124.73221370007934,
+                    179.74411531340914
+                ],
+                [
+                    157.26329013488493,
+                    220.2096006347527
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    99.60658555937583,
+                    36.395794763290134
+                ],
+                [
+                    103.30930970642687,
+                    43.536762761174295
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 FF 시그니처 나파 가죽 백_6.jpg",
+    "imageWidth": 225,
+    "imageHeight": 225,
+    "imageData": null
+}

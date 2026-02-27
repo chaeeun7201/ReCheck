@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    27.063170586076456,
+                    46.4030887737887
+                ],
+                [
+                    277.19699246020656,
+                    297.9000377426007
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "main",
+            "points": [
+                [
+                    231.45017807565023,
+                    415.245187671443
+                ],
+                [
+                    281.0330541145299,
+                    477.7991114504515
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_도브 그레이 가죽 핸드백_5.jpg",
+    "imageWidth": 312,
+    "imageHeight": 512,
+    "imageData": null
+}

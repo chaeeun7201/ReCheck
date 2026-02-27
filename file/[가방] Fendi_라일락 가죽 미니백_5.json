@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    1.4056910394567836,
+                    0
+                ],
+                [
+                    895.9790759989829,
+                    897.7069976802874
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 가죽 미니백_5.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

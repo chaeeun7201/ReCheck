@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    25.149213239283785,
+                    597.0428648941942
+                ],
+                [
+                    852.061855670103,
+                    860.7433532284317
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_FF 프린트 장식 브라운 가죽 미니백_2.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

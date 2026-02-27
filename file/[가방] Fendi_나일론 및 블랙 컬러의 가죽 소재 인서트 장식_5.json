@@ -1,0 +1,78 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    410.9783281733746,
+                    10.60216718266254
+                ],
+                [
+                    579.3993808049536,
+                    233.5123839009288
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    74.13622291021672,
+                    9.363777089783284
+                ],
+                [
+                    240.0804953560371,
+                    233.5123839009288
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    757.7275541795666,
+                    27.93962848297214
+                ],
+                [
+                    910.0495356037152,
+                    233.5123839009288
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    1093.3312693498451,
+                    25.462848297213625
+                ],
+                [
+                    1244.4148606811145,
+                    233.5123839009288
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_나일론 및 블랙 컬러의 가죽 소재 인서트 장식_5.jpg",
+    "imageWidth": 1324,
+    "imageHeight": 303,
+    "imageData": null
+}

@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    210.05639097744358,
+                    98.68421052631578
+                ],
+                [
+                    493.890977443609,
+                    380.63909774436087
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 캔버스 가방_5.jpg",
+    "imageWidth": 500,
+    "imageHeight": 500,
+    "imageData": null
+}

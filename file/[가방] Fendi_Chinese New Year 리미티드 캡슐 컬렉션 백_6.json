@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    143.40396445659604,
+                    279.80177717019825
+                ],
+                [
+                    934.9282296650717,
+                    680.3485987696514
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "main",
+            "points": [
+                [
+                    621.872863978127,
+                    442.4812030075188
+                ],
+                [
+                    1200.0,
+                    770.5741626794259
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_Chinese New Year 리미티드 캡슐 컬렉션 백_6.jpg",
+    "imageWidth": 1200,
+    "imageHeight": 900,
+    "imageData": null
+}

@@ -1,0 +1,61 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    85.96807917547947,
+                    13.269227300054537
+                ],
+                [
+                    163.86249338579412,
+                    188.30255805499684
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    629.4174299402492,
+                    17.017751245360976
+                ],
+                [
+                    704.9649626988421,
+                    189.93042320576103
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    357.7785610981338,
+                    12.811024863523274
+                ],
+                [
+                    434.2264996358759,
+                    185.095140999278
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 라피아 미니백_4.jpg",
+    "imageWidth": 800,
+    "imageHeight": 194,
+    "imageData": null
+}

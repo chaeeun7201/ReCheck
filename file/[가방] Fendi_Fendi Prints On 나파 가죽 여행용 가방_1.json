@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    104.63157894736841,
+                    260.9783281733746
+                ],
+                [
+                    934.3529411764707,
+                    983.8885448916408
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_Fendi Prints On 나파 가죽 여행용 가방_1.jpg",
+    "imageWidth": 1024,
+    "imageHeight": 1024,
+    "imageData": null
+}

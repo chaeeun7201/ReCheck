@@ -1,0 +1,95 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    367.6659738474715,
+                    173.85287436033968
+                ],
+                [
+                    498.9546983897464,
+                    429.35919138105413
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    330.39535080488446,
+                    143.8749684876913
+                ],
+                [
+                    538.0357754167292,
+                    532.7124579141358
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    456.105821808269,
+                    725.6744956433662
+                ],
+                [
+                    558.5853466410689,
+                    845.8938739461984
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    370.76711336188174,
+                    744.389338274245
+                ],
+                [
+                    465.4601124442098,
+                    878.2764594932983
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    434.0540666989538,
+                    118.92387594072463
+                ],
+                [
+                    444.2301452504622,
+                    145.87163951231176
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_버건디 라피아 FF 백_6.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

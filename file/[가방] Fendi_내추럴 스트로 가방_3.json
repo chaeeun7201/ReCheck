@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    204.93421052631578,
+                    426.97368421052636
+                ],
+                [
+                    688.4868421052632,
+                    862.8289473684212
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_내추럴 스트로 가방_3.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

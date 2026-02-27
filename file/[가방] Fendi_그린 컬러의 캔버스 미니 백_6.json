@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    50.23308270676695,
+                    25.284846732215154
+                ],
+                [
+                    233.9999999999999,
+                    204.29005205320993
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 컬러의 캔버스 미니 백_6.jpg",
+    "imageWidth": 234,
+    "imageHeight": 215,
+    "imageData": null
+}

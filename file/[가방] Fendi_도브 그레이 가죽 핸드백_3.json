@@ -1,0 +1,95 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    307.2749045506202,
+                    535.5272222495458
+                ],
+                [
+                    425.8270420606657,
+                    670.5998479537251
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    328.1805932926708,
+                    152.53379449470006
+                ],
+                [
+                    521.7806699087367,
+                    519.7689398258003
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    362.0606067004824,
+                    40.00374996161168
+                ],
+                [
+                    488.5056567403507,
+                    128.33378491769187
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    365.20866441489244,
+                    400.35017457049565
+                ],
+                [
+                    615.618108723221,
+                    875.5399924006698
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    418.912323642796,
+                    124.41199220712738
+                ],
+                [
+                    431.1042442849438,
+                    144.9301025561077
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_도브 그레이 가죽 핸드백_3.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

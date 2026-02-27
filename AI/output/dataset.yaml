@@ -1,0 +1,35 @@
+# ReCheck YOLOv8 Dataset Config
+path: C:\Users\chaeeun\OneDrive - kyonggi.ac.kr\바탕 화면\ReCheck\ReCheck\AI\output
+train: images/train
+val:   images/val
+
+nc: 28
+names:
+  0: CJ
+  1: Fendi
+  2: H&M
+  3: SaintLaurent
+  4: 구찌
+  5: 나이키
+  6: 노스페이스
+  7: 농심
+  8: 뉴발란스
+  9: 닥터마틴
+  10: 디올
+  11: 라인프렌즈
+  12: 레이번
+  13: 루이비통
+  14: 반스
+  15: 보스
+  16: 보테가 베네타
+  17: 샤넬
+  18: 아디다스
+  19: 에르메스
+  20: 오클리
+  21: 유니클로
+  22: 젠틀몬스터
+  23: 지방시
+  24: 카카오프렌즈
+  25: 톰포드
+  26: 티파니앤코
+  27: 프라다

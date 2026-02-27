@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    108.83840487645708,
+                    51.417445969494366
+                ],
+                [
+                    542.054408875374,
+                    505.7388450350252
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 가죽 쇼퍼_2.jpg",
+    "imageWidth": 650,
+    "imageHeight": 665,
+    "imageData": null
+}

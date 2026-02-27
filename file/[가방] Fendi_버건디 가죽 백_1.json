@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    23.974766580639734,
+                    103.44253487390048
+                ],
+                [
+                    895.083870438111,
+                    1070.042345865636
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_버건디 가죽 백_1.jpg",
+    "imageWidth": 920,
+    "imageHeight": 1226,
+    "imageData": null
+}

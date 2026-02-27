@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    27.8537565287264,
+                    83.56555510914691
+                ],
+                [
+                    155.61591000401765,
+                    212.39908932636934
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    115.61482484345913,
+                    139.98443052970046
+                ],
+                [
+                    207.3393129125064,
+                    216.47791504484687
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 가죽 가방_1.jpg",
+    "imageWidth": 224,
+    "imageHeight": 224,
+    "imageData": null
+}

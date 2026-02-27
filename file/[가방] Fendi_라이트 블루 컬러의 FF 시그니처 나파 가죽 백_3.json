@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    173.04095617590477,
+                    473.63050483351236
+                ],
+                [
+                    647.636949516649,
+                    859.6586043878867
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 FF 시그니처 나파 가죽 백_3.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

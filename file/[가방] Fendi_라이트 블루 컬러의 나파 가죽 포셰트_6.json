@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    12.760175935589679,
+                    76.7053824362606
+                ],
+                [
+                    183.92463098255553,
+                    181.3721485015655
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 나파 가죽 포셰트_6.jpg",
+    "imageWidth": 195,
+    "imageHeight": 258,
+    "imageData": null
+}

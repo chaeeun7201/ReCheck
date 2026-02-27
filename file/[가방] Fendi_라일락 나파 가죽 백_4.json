@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    70.60333287316068,
+                    538.6537671757882
+                ],
+                [
+                    591.5429490259578,
+                    1221.4519063630055
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "main",
+            "points": [
+                [
+                    580.6617037799464,
+                    791.642719145554
+                ],
+                [
+                    1173.6326906196618,
+                    1383.3227997880235
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 나파 가죽 백_4.jpg",
+    "imageWidth": 1200,
+    "imageHeight": 1600,
+    "imageData": null
+}

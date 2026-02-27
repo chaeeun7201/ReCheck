@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    351.3372261337053,
+                    1.0409874243130013
+                ],
+                [
+                    831.5843622814275,
+                    555.1449850226617
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    264.499942093362,
+                    0
+                ],
+                [
+                    733.2375757238547,
+                    765.5947265355753
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 캔버스 가방_4.jpg",
+    "imageWidth": 1080,
+    "imageHeight": 810,
+    "imageData": null
+}

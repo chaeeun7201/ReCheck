@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    9.693431148202993,
+                    33.11515681787589
+                ],
+                [
+                    214.5662269484453,
+                    187.37548795261813
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 컬러의 패브릭 백_3.jpg",
+    "imageWidth": 225,
+    "imageHeight": 225,
+    "imageData": null
+}

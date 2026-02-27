@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    1.9203413940255967,
+                    110.02844950213371
+                ],
+                [
+                    640.6116642958749,
+                    859.6728307254624
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_FF 모티프 오렌지 나파 가죽 백_1.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

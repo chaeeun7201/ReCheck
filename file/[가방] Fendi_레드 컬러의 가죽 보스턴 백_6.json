@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    112.19298245614034,
+                    209.0526315789473
+                ],
+                [
+                    580.9649122807017,
+                    624.4912280701753
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_레드 컬러의 가죽 보스턴 백_6.jpg",
+    "imageWidth": 750,
+    "imageHeight": 856,
+    "imageData": null
+}

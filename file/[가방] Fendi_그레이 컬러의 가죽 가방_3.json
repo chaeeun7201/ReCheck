@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    47.68610715979137,
+                    103.16263632053105
+                ],
+                [
+                    205.81792318634425,
+                    248.96633475580848
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 컬러의 가죽 가방_3.jpg",
+    "imageWidth": 260,
+    "imageHeight": 260,
+    "imageData": null
+}

@@ -1,0 +1,78 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    19.976230899830217,
+                    72.94736842105263
+                ],
+                [
+                    179.56876061120542,
+                    252.23429541595928
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    101.47028862478777,
+                    219.63667232597626
+                ],
+                [
+                    250.87606112054328,
+                    407.0730050933786
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    248.15959252971138,
+                    125.91850594227505
+                ],
+                [
+                    375.15449915110355,
+                    295.018675721562
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    204.01697792869268,
+                    99.43293718166383
+                ],
+                [
+                    413.8641765704584,
+                    411.8268251273345
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 가죽 미니백_6.jpg",
+    "imageWidth": 428,
+    "imageHeight": 428,
+    "imageData": null
+}

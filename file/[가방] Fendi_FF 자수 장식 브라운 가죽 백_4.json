@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    1.0590408181851532,
+                    187.4047109006565
+                ],
+                [
+                    298.2308936756558,
+                    351.4585728882192
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_FF 자수 장식 브라운 가죽 백_4.jpg",
+    "imageWidth": 300,
+    "imageHeight": 400,
+    "imageData": null
+}

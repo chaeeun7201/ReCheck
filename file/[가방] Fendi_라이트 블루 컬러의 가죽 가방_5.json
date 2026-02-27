@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    35.80730919370037,
+                    143.22418898909677
+                ],
+                [
+                    190.87528604118992,
+                    215.9123031363575
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 가죽 가방_5.jpg",
+    "imageWidth": 225,
+    "imageHeight": 225,
+    "imageData": null
+}

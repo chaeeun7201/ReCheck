@@ -1,0 +1,61 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    93.50938691350139,
+                    10.989648460057694
+                ],
+                [
+                    175.4707801061428,
+                    77.80957945646816
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    127.38812955366699,
+                    79.43228035874486
+                ],
+                [
+                    208.5849143156907,
+                    144.5901940566651
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    96.14574529338216,
+                    147.43041080760008
+                ],
+                [
+                    177.34253005540586,
+                    212.4212529319359
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 컬러의 가죽 미니 백_4.jpg",
+    "imageWidth": 225,
+    "imageHeight": 225,
+    "imageData": null
+}

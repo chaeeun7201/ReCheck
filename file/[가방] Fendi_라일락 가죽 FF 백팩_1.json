@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    49.677265245493594,
+                    109.63296398891966
+                ],
+                [
+                    144.10096752177927,
+                    217.86693564575052
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 가죽 FF 백팩_1.jpg",
+    "imageWidth": 198,
+    "imageHeight": 255,
+    "imageData": null
+}

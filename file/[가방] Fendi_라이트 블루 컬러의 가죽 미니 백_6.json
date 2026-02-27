@@ -1,0 +1,112 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    464.4066982124634,
+                    146.30419816567732
+                ],
+                [
+                    485.55110898080267,
+                    192.06449012700844
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    383.77174365095414,
+                    167.9698163138363
+                ],
+                [
+                    664.7520048472028,
+                    811.9683711723916
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    446.7738144705287,
+                    792.0893443752038
+                ],
+                [
+                    527.8590914591393,
+                    1007.9360676265758
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    564.4045684117525,
+                    792.6603674525884
+                ],
+                [
+                    697.4529454423601,
+                    1005.0809522396529
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    347.6752977808465,
+                    168.77469273220504
+                ],
+                [
+                    729.3873479415636,
+                    600.6021105289025
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "main",
+            "points": [
+                [
+                    397.6968410481831,
+                    193.75389675444717
+                ],
+                [
+                    583.2752387859914,
+                    466.1854840059098
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 가죽 미니 백_6.jpg",
+    "imageWidth": 1034,
+    "imageHeight": 1037,
+    "imageData": null
+}

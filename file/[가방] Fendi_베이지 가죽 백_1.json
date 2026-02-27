@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    90.26044492674987,
+                    464.6500271296798
+                ],
+                [
+                    827.1025501899077,
+                    855.3174172544763
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_베이지 가죽 백_1.jpeg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

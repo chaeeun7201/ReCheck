@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    34.975836114119076,
+                    27.503162330822036
+                ],
+                [
+                    228.79559694616603,
+                    248.57470073802062
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_내추럴 컬러 가죽 쇼퍼_5.jpg",
+    "imageWidth": 260,
+    "imageHeight": 260,
+    "imageData": null
+}

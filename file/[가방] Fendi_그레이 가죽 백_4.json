@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    100.07112375533428,
+                    218.13655761024182
+                ],
+                [
+                    731.6500711237554,
+                    859.6728307254625
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 가죽 백_4.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

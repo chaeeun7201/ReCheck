@@ -1,0 +1,112 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    87.75248933143669,
+                    144.651493598862
+                ],
+                [
+                    125.44807965860598,
+                    219.56851588430536
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    111.46040777619724,
+                    10.938833570412518
+                ],
+                [
+                    138.25035561877667,
+                    32.0388809862494
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    97.23565670934092,
+                    47.44902797534376
+                ],
+                [
+                    144.4144144144144,
+                    96.05026078710289
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    103.87387387387383,
+                    91.54575628259839
+                ],
+                [
+                    157.69084874348033,
+                    156.50545282124227
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    147.04587419082756,
+                    226.82150316258782
+                ],
+                [
+                    171.6393654575872,
+                    252.90962649528313
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    114.84334695203177,
+                    229.53901600974353
+                ],
+                [
+                    132.23542917382863,
+                    253.9966316341454
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 나파 가죽 백_3.jpg",
+    "imageWidth": 260,
+    "imageHeight": 260,
+    "imageData": null
+}

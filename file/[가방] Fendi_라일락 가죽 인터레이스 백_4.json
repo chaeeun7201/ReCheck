@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    16.154575628259835,
+                    100.31768610715979
+                ],
+                [
+                    206.05500237079184,
+                    250.3888098624941
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라일락 가죽 인터레이스 백_4.jpg",
+    "imageWidth": 260,
+    "imageHeight": 260,
+    "imageData": null
+}

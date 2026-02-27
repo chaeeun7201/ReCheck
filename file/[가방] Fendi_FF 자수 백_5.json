@@ -1,0 +1,78 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    47.79152389494052,
+                    38.69984331722907
+                ],
+                [
+                    323.03071025530534,
+                    204.56538198610235
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    436.6902467004744,
+                    39.81890055537142
+                ],
+                [
+                    728.3687577615353,
+                    205.04719005816904
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    76.43102701549952,
+                    723.7805358848705
+                ],
+                [
+                    304.0066651893993,
+                    863.1523399913702
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    448.8249621593391,
+                    709.5998283132585
+                ],
+                [
+                    721.7724252969156,
+                    862.9502180609779
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_FF 자수 백_5.jpg",
+    "imageWidth": 800,
+    "imageHeight": 1042,
+    "imageData": null
+}

@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    151.5323554788611,
+                    4.944348576359033
+                ],
+                [
+                    470.7730802415874,
+                    545.0651423641082
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    97.17515099223469,
+                    4.944348576358929
+                ],
+                [
+                    613.137187230371,
+                    593.3826574633305
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 재활용 플라스틱 미니 백_3.jpg",
+    "imageWidth": 668,
+    "imageHeight": 599,
+    "imageData": null
+}

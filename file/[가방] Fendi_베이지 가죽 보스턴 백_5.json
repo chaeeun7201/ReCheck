@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    66.54135338345866,
+                    498.5304169514696
+                ],
+                [
+                    766.473000683527,
+                    853.9644565960355
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_베이지 가죽 보스턴 백_5.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

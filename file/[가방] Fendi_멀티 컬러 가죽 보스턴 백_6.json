@@ -1,0 +1,95 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    302.99455535390194,
+                    492.952208106473
+                ],
+                [
+                    496.5819721718088,
+                    612.7344222625528
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    354.81550143307044,
+                    170.73280307661545
+                ],
+                [
+                    557.9594388114626,
+                    489.4430692747154
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    350.30119171355074,
+                    313.384990213442
+                ],
+                [
+                    548.0279574285192,
+                    652.8610811213331
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    297.9351989671206,
+                    626.6780847481181
+                ],
+                [
+                    394.5414269648449,
+                    883.9937387607483
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    463.1589347015463,
+                    624.8723608603101
+                ],
+                [
+                    572.4052299139262,
+                    875.8679812656125
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러 가죽 보스턴 백_6.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

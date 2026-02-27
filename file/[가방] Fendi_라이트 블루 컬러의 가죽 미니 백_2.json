@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    26.068111455108372,
+                    5.040247678018567
+                ],
+                [
+                    1058.8854489164087,
+                    1031.9999999999998
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_라이트 블루 컬러의 가죽 미니 백_2.jpg",
+    "imageWidth": 1080,
+    "imageHeight": 1032,
+    "imageData": null
+}

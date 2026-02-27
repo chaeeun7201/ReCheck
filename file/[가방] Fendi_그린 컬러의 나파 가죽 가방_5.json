@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    50.07112375533428,
+                    119.7136083451873
+                ],
+                [
+                    638.9758179231864,
+                    532.2313892840209
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 컬러의 나파 가죽 가방_5.jpg",
+    "imageWidth": 800,
+    "imageHeight": 568,
+    "imageData": null
+}

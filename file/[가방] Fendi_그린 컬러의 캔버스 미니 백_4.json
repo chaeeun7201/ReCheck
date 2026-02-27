@@ -1,0 +1,95 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    40.31148684834372,
+                    103.20381600175956
+                ],
+                [
+                    74.67169051084286,
+                    166.7793799976136
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    112.97517345881235,
+                    103.45533989507423
+                ],
+                [
+                    147.836667703242,
+                    166.32354018980413
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    72.07436007002619,
+                    202.69412710860027
+                ],
+                [
+                    111.22130851259155,
+                    253.07769964116125
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    38.84771355223306,
+                    10.357184807999435
+                ],
+                [
+                    72.74430253184202,
+                    72.50093127061587
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    111.63846552767538,
+                    9.922613154414703
+                ],
+                [
+                    146.83876946803852,
+                    73.80464623137006
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 컬러의 캔버스 미니 백_4.jpg",
+    "imageWidth": 183,
+    "imageHeight": 276,
+    "imageData": null
+}

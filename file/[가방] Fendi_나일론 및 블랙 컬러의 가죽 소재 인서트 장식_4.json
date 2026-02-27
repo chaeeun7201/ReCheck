@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    173.10844405213223,
+                    239.35422046322142
+                ],
+                [
+                    661.9320801034941,
+                    856.3938922001863
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    242.01451905626135,
+                    138.92921960072596
+                ],
+                [
+                    738.5662431941923,
+                    899.2740471869329
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_나일론 및 블랙 컬러의 가죽 소재 인서트 장식_4.jpg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

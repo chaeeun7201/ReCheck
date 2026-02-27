@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    17.20226233735787,
+                    52.25337006212636
+                ],
+                [
+                    195.37598171374984,
+                    148.13896377915836
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 패브릭 파우치_6.jpg",
+    "imageWidth": 255,
+    "imageHeight": 197,
+    "imageData": null
+}

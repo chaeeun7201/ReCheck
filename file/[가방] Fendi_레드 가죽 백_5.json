@@ -1,0 +1,61 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    66.39412484700122,
+                    1.2141982864137097
+                ],
+                [
+                    373.6156670746634,
+                    392.89106487148103
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    137.38555691554467,
+                    407.57894736842104
+                ],
+                [
+                    224.90085679314564,
+                    512.0
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    286.1003671970624,
+                    326.18359853121177
+                ],
+                [
+                    338.1199510403917,
+                    389.8310893512852
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_레드 가죽 백_5.jpg",
+    "imageWidth": 384,
+    "imageHeight": 512,
+    "imageData": null
+}

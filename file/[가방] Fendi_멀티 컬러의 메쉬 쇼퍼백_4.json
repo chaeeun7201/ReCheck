@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    53.44129554655871,
+                    158.70445344129556
+                ],
+                [
+                    445.14170040485834,
+                    559.5141700404857
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "main",
+            "points": [
+                [
+                    355.0607287449393,
+                    139.47368421052633
+                ],
+                [
+                    677.9352226720647,
+                    490.68825910931173
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러의 메쉬 쇼퍼백_4.jpg",
+    "imageWidth": 700,
+    "imageHeight": 700,
+    "imageData": null
+}

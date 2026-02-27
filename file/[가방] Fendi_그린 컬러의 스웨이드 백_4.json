@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    11.260740189696852,
+                    45.62981216291612
+                ],
+                [
+                    186.8233215547703,
+                    238.67426074018965
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 컬러의 스웨이드 백_4.jpg",
+    "imageWidth": 194,
+    "imageHeight": 259,
+    "imageData": null
+}

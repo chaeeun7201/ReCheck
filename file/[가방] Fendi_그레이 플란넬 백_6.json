@@ -1,0 +1,112 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    13.647823261858347,
+                    128.14262508122158
+                ],
+                [
+                    70.04808317089018,
+                    188.18161143599738
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "main",
+            "points": [
+                [
+                    126.96816114359973,
+                    96.95354126055881
+                ],
+                [
+                    178.69005847953215,
+                    142.69753086419752
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    170.89278752436647,
+                    46.271280051981805
+                ],
+                [
+                    227.55295646523714,
+                    77.98018193632228
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "matched-category",
+            "points": [
+                [
+                    179.98960363872644,
+                    89.41617933723197
+                ],
+                [
+                    223.91423001949317,
+                    106.5701754385965
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    133.46588693957113,
+                    13.002923976608185
+                ],
+                [
+                    170.37296946068875,
+                    92.7949967511371
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    185.21755743740863,
+                    114.47059758606304
+                ],
+                [
+                    213.5852818443205,
+                    155.8783243413134
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그레이 플란넬 백_6.jpg",
+    "imageWidth": 232,
+    "imageHeight": 217,
+    "imageData": null
+}

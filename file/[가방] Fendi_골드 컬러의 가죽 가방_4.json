@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    15.948475318915444,
+                    206.62040723230402
+                ],
+                [
+                    394.79629207289565,
+                    515.9825797650597
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_골드 컬러의 가죽 가방_4.jpg",
+    "imageWidth": 400,
+    "imageHeight": 533,
+    "imageData": null
+}

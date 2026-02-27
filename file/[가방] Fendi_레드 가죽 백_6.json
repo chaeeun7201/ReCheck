@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    77.68623481781376,
+                    0
+                ],
+                [
+                    329.5080971659919,
+                    488.55060728744934
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_레드 가죽 백_6.jpg",
+    "imageWidth": 371,
+    "imageHeight": 512,
+    "imageData": null
+}

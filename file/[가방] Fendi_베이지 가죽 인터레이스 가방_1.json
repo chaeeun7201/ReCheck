@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    110.63157894736842,
+                    128.73684210526315
+                ],
+                [
+                    159.47368421052633,
+                    184.31578947368422
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_베이지 가죽 인터레이스 가방_1.jpg",
+    "imageWidth": 260,
+    "imageHeight": 260,
+    "imageData": null
+}

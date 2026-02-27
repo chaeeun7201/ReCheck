@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    325.3348285773516,
+                    516.5747591228532
+                ],
+                [
+                    690.0031275097052,
+                    976.8630233279576
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_베이지 가죽 메쉬 미니 백_5.jpg",
+    "imageWidth": 1024,
+    "imageHeight": 1024,
+    "imageData": null
+}

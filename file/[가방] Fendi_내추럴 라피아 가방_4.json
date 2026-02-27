@@ -1,0 +1,44 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    169.2682926829268,
+                    96.78433889602053
+                ],
+                [
+                    682.7471116816431,
+                    540.9435173299102
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        },
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    700.7188703465982,
+                    431.8292682926829
+                ],
+                [
+                    898.408215661104,
+                    583.3055198973042
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_내추럴 라피아 가방_4.jpg",
+    "imageWidth": 1080,
+    "imageHeight": 810,
+    "imageData": null
+}

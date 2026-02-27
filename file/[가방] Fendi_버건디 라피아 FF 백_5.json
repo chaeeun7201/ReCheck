@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    131.1252268602542,
+                    671.9600725952807
+                ],
+                [
+                    1181.9419237749553,
+                    1426.950998185118
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_버건디 라피아 FF 백_5.jpg",
+    "imageWidth": 1500,
+    "imageHeight": 1500,
+    "imageData": null
+}

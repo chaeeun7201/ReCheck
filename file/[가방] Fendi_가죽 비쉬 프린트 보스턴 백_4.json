@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    162.0047309284447,
+                    473.06327616794795
+                ],
+                [
+                    842.0756948551153,
+                    859.8166765227674
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_가죽 비쉬 프린트 보스턴 백_4.jpeg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

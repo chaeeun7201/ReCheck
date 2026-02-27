@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    77.9589652096342,
+                    69.93041926851025
+                ],
+                [
+                    145.4582218257508,
+                    213.55218554861733
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_베이지 가죽 미니백_3.jpg",
+    "imageWidth": 224,
+    "imageHeight": 224,
+    "imageData": null
+}

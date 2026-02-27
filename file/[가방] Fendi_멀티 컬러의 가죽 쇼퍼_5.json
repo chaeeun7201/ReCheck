@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "unmatched-category",
+            "points": [
+                [
+                    25.693137595747324,
+                    192.87859297722247
+                ],
+                [
+                    1263.8193502080364,
+                    1076.6136070519362
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러의 가죽 쇼퍼_5.jpg",
+    "imageWidth": 1280,
+    "imageHeight": 1273,
+    "imageData": null
+}

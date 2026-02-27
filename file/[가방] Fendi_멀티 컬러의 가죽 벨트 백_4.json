@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    0.667565930193138,
+                    147.2557316507557
+                ],
+                [
+                    1200.0,
+                    781.9679913604805
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러의 가죽 벨트 백_4.jpg",
+    "imageWidth": 1200,
+    "imageHeight": 900,
+    "imageData": null
+}

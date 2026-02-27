@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    44.51445515196443,
+                    384.7664936990363
+                ],
+                [
+                    765.7894736842105,
+                    862.8984432913269
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_멀티 컬러의 가죽 가방_1.jpeg",
+    "imageWidth": 900,
+    "imageHeight": 900,
+    "imageData": null
+}

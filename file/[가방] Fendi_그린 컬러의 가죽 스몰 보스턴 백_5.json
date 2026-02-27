@@ -1,0 +1,27 @@
+{
+    "version": "4.5.6",
+    "flags": {},
+    "shapes": [
+        {
+            "label": "main",
+            "points": [
+                [
+                    31.19416187527643,
+                    153.7063246351172
+                ],
+                [
+                    214.29898275099512,
+                    248.79699248120298
+                ]
+            ],
+            "group_id": null,
+            "shape_type": "rectangle",
+            "labels": [],
+            "flags": {}
+        }
+    ],
+    "imagePath": "[가방] Fendi_그린 컬러의 가죽 스몰 보스턴 백_5.jpg",
+    "imageWidth": 260,
+    "imageHeight": 260,
+    "imageData": null
+}
