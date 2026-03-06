@@ -58,7 +58,12 @@ async def _get_pool():
             await conn.execute(DDL)
         print("[ReCheck DB] PostgreSQL 연결 완료")
     except Exception as e:
-        print(f"[ReCheck DB] PostgreSQL 연결 실패, in-memory mock 사용: {e}")
+        err = str(e)
+        if "schema" in err and ("permission" in err or "권한" in err or "42501" in err):
+            print(f"[ReCheck DB] PostgreSQL 스키마 권한 없음 → psql에서 아래 명령 실행 후 재시작:")
+            print("   psql -U postgres -d recheck_db -c \"GRANT CREATE ON SCHEMA public TO recheck;\"")
+        else:
+            print(f"[ReCheck DB] PostgreSQL 연결 실패, in-memory mock 사용: {e}")
         _pool = None
     return _pool
 

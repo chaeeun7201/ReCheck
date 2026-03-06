@@ -5,7 +5,7 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 
-from detector import detect_and_classify
+from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name
 
 from database import save_training_data, get_db_stats
 
@@ -57,11 +57,15 @@ async def confirm(payload: ConfirmPayload):
     3단계: 사용자가 확인/수정한 라벨을 DB에 저장 → 재학습 데이터 자산화
     """
     try:
+        # 한국어 입력 시 영어로 변환 후 저장
+        brand = BRAND_KO_TO_EN.get(payload.brand, payload.brand)
+        model_name = _translate_model_name(payload.model_name)
+
         record_id = await save_training_data(
             image_b64=payload.image_b64,
             bbox=payload.bbox,
-            brand=payload.brand,
-            model_name=payload.model_name,
+            brand=brand,
+            model_name=model_name,
             confirmed_by=payload.confirmed_by,
         )
         return {
