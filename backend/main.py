@@ -5,9 +5,9 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 
-from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name
+from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding
 
-from database import save_training_data, get_db_stats
+from backend.database import save_training_data, get_db_stats
 
 app = FastAPI(title="ReCheck API", version="1.0.0")
 
@@ -68,6 +68,10 @@ async def confirm(payload: ConfirmPayload):
             model_name=model_name,
             confirmed_by=payload.confirmed_by,
         )
+
+        # CLIP 임베딩 실시간 업데이트 (다음 요청부터 즉시 반영)
+        await add_embedding(payload.image_b64, brand, model_name)
+
         return {
             "success": True,
             "record_id": record_id,
