@@ -38,6 +38,7 @@ BRAND_KO_TO_EN: dict[str, str] = {
     "루이비통":    "Louis Vuitton",
     "구찌":        "Gucci",
     "에르메스":    "Hermès",
+    "셀린느":      "Celine",
     "프라다":      "Prada",
     "디올":        "Dior",
     "보테가 베네타": "Bottega Veneta",
@@ -155,6 +156,7 @@ BRAND_CATALOG = {
     "Balenciaga": ["City", "Hourglass", "Le Cagole", "Neo Classic", "Rodeo"],
     "Saint Laurent": ["Lou Camera", "Loulou", "Sunset", "Solferino", "Le 5 à 7"],
     "Dior": ["Lady Dior", "Saddle", "Book Tote", "30 Montaigne", "Bobby"],
+    "Celine": ["Triomphe", "C Bag", "Cabas", "Besace", "Ava"],
 }
 
 
@@ -443,7 +445,11 @@ def _search_model_in_brand(query_emb: np.ndarray, brand: str, top_k: int = 3) ->
     top3 = sorted(seen_models.values(), key=lambda x: x["score"], reverse=True)[:top_k]
 
     scores = [item["score"] for item in top3]
-    model_confident = len(scores) < 2 or (scores[0] - scores[1]) > MODEL_GAP_THRESHOLD
+    model_confident = (
+        len(scores) < 2
+        or (scores[0] - scores[1]) > MODEL_GAP_THRESHOLD
+        or scores[0] >= 0.95
+    )
 
     return top3, model_confident
 
@@ -479,7 +485,11 @@ def _search_similar(query_emb: np.ndarray, top_k: int = 3) -> tuple[list[dict], 
 
     # ② 1·2위 점수 차로 모델 신뢰도 판단
     scores = [item["score"] for item in top3]
-    model_confident = len(scores) < 2 or (scores[0] - scores[1]) > MODEL_GAP_THRESHOLD
+    model_confident = (
+        len(scores) < 2
+        or (scores[0] - scores[1]) > MODEL_GAP_THRESHOLD
+        or scores[0] >= 0.95
+    )
 
     return top3, model_confident
 
