@@ -331,8 +331,18 @@ async def add_embedding(image_b64: str, brand: str, model_name: str) -> bool:
     """
     global _embeddings, _labels, _brand_text_embeddings
 
-    if _embeddings is None or _clip_model is None:
-        return False
+    print(f"[ReCheck] add_embedding 호출됨: brand={brand}, model={model_name}, clip_loaded={_clip_model is not None}, emb_loaded={_embeddings is not None}")
+
+    # 필요 시 CLIP 모델 및 임베딩 DB 로드
+    if _clip_model is None:
+        ok = await _load_clip()
+        if not ok:
+            print("[ReCheck] add_embedding: CLIP 로드 실패")
+            return False
+    if _embeddings is None:
+        if not _load_embeddings():
+            print("[ReCheck] add_embedding: 임베딩 DB 로드 실패")
+            return False
 
     try:
         import base64 as _b64
@@ -539,6 +549,30 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
     query_emb = await _get_image_embedding(image)
     if query_emb is None:
         return _mock_result(image_bytes)
+
+    # ── 근사 캐시 히트: 유사도 0.97 이상인 저장 임베딩 있으면 바로 반환 ──
+    if _embeddings is not None and len(_embeddings) > 0:
+        sims = _embeddings @ query_emb
+        best_idx = int(np.argmax(sims))
+        if float(sims[best_idx]) >= 0.97:
+            hit_label = _labels[best_idx]
+            hit_brand = BRAND_KO_TO_EN.get(hit_label["brand"], hit_label["brand"])
+            hit_model = _translate_model_name(hit_label["model"])
+            confidence = round(float(sims[best_idx]), 4)
+            print(f"[ReCheck] 캐시 히트 (유사도 {confidence:.4f}): {hit_brand} / {hit_model}")
+            return {
+                "detected": True,
+                "bbox": bbox,
+                "prediction": {
+                    "brand": hit_brand,
+                    "model_name": hit_model,
+                    "confidence": confidence,
+                    "model_confident": True,
+                    "top3": [{"brand": hit_brand, "model_name": hit_model, "score": confidence}],
+                },
+                "mode": "real",
+                "message": f"AI가 '{hit_brand} {hit_model}'으로 추측했습니다. (신뢰도 {int(confidence * 100)}%)"
+            }
 
     # 브랜드 분류 (CLIP 이미지↔텍스트 유사도)
     detected_brand = _classify_brand_by_text(query_emb)

@@ -6,6 +6,7 @@
   <title>ReCheck — 상품 스캐너</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     /* ── 리셋 & 변수 ─────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -486,6 +487,199 @@
       height: 1px; background: var(--border);
       margin: 28px 0;
     }
+
+    /* ── 시세 차트 ───────────────────────────────────── */
+
+    /* 판매자/구매자 토글 */
+    .mode-toggle {
+      display: flex;
+      gap: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+    .mode-btn {
+      padding: 9px 22px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .mode-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 6px rgba(0,0,0,.4);
+    }
+    .mode-btn.active.sell { color: #ff7a8a; }
+    .mode-btn.active.buy  { color: #4dffc3; }
+
+    /* 현재 시세 + 변동 */
+    .price-block {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .price-block-inner { line-height: 1; }
+    .price-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .price-num {
+      font-family: 'Inter', 'Noto Sans KR', system-ui, sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      letter-spacing: -1px;
+    }
+    .price-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-badge.up   { background: rgba(77,255,195,.12); color: var(--mint); }
+    .price-badge.down { background: rgba(255,77,106,.12); color: var(--red); }
+    .price-badge small { font-size: 10px; opacity: .7; margin-right: 2px; }
+
+    .datasource-tag {
+      margin-left: auto;
+      align-self: flex-start;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+    .datasource-tag.live { border-color: var(--mint-dim); color: var(--mint); }
+
+    /* 가격 급변 이벤트 카드 */
+    .event-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .event-badge {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .event-badge.up   { background: rgba(255,77,106,.15); color: #ff4d6a; }
+    .event-badge.down { background: rgba(77,255,195,.12); color: #4dffc3; }
+    .event-text { flex: 1; color: var(--text-muted); line-height: 1.4; }
+    .event-text strong { color: var(--text); }
+    .event-search {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    .event-search:hover { color: var(--mint); border-color: var(--mint-dim); }
+
+    /* 최적 시점 하이라이트 바 */
+    .optimal-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      transition: all .3s;
+    }
+    .optimal-bar.sell-mode {
+      background: linear-gradient(90deg, rgba(255,77,106,.15), rgba(255,77,106,.04));
+      border: 1px solid rgba(255,77,106,.35);
+    }
+    .optimal-bar.buy-mode {
+      background: linear-gradient(90deg, rgba(77,255,195,.12), rgba(77,255,195,.03));
+      border: 1px solid rgba(77,255,195,.3);
+    }
+    .ob-icon { font-size: 24px; flex-shrink: 0; }
+    .ob-body { flex: 1; min-width: 0; }
+    .ob-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      margin-bottom: 4px;
+    }
+    .sell-mode .ob-label { color: rgba(255,120,138,.8); }
+    .buy-mode  .ob-label { color: rgba(77,255,195,.7); }
+    .ob-value {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .sell-mode .ob-value { color: #ff7a8a; }
+    .buy-mode  .ob-value { color: #4dffc3; }
+    .ob-month {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+    .ob-gain {
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      padding: 5px 12px;
+      border-radius: 7px;
+      flex-shrink: 0;
+    }
+    .sell-mode .ob-gain { background: rgba(255,77,106,.15); color: #ff7a8a; }
+    .buy-mode  .ob-gain { background: rgba(77,255,195,.12); color: var(--mint); }
+
+    /* 범례 + 차트 */
+    .chart-legend {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 260px;
+    }
   </style>
 </head>
 <body>
@@ -634,6 +828,67 @@
       </div>
     </div>
 
+    <!-- 시세 차트 (step2 결과 아래 표시) -->
+    <div id="priceChartSection" class="card mt-6 hidden">
+
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;">
+        <div class="card-title" style="margin-bottom:0;">시세 예측 차트</div>
+        <span class="datasource-tag" id="dataSourceTag">AI 추정</span>
+      </div>
+      <div class="card-sub" style="margin-bottom:20px;">과거 리셀 시세 · 계절성 · 브랜드 트렌드를 반영한 미래 예측가</div>
+
+      <!-- 판매자 / 구매자 모드 토글 -->
+      <div class="mode-toggle">
+        <button class="mode-btn sell active" id="modeSell">📈 판매자</button>
+        <button class="mode-btn buy" id="modeBuy">🛍️ 구매자</button>
+      </div>
+
+      <!-- 현재 시세 + 변동 뱃지 -->
+      <div class="price-block">
+        <div class="price-block-inner">
+          <div class="price-label">현재 시세</div>
+          <div class="price-num" id="chartCurrentPrice">—</div>
+        </div>
+        <span class="price-badge" id="badge1m">—</span>
+        <span class="price-badge" id="badge6m">—</span>
+      </div>
+
+      <!-- 최적 시점 바 (모드에 따라 sell-mode / buy-mode 클래스 전환) -->
+      <div class="optimal-bar sell-mode" id="optimalBar">
+        <span class="ob-icon" id="obIcon">🎯</span>
+        <div class="ob-body">
+          <div class="ob-label" id="obLabel">최적 매도 시점</div>
+          <div>
+            <span class="ob-value" id="obPrice">—</span>
+            <span class="ob-month" id="obMonth">—</span>
+          </div>
+        </div>
+        <div class="ob-gain" id="obGain">—</div>
+      </div>
+
+      <!-- 범례 -->
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#c8dce8"></span>과거 시세
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#4dffc3"></span>AI 예측
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" id="legendOptimalDot" style="background:#ff4d6a; box-shadow:0 0 6px #ff4d6a"></span>
+          <span id="legendOptimalText">최적 매도</span>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="priceChart"></canvas>
+      </div>
+
+      <!-- 가격 급변 이벤트 카드 -->
+      <div id="priceEvents" style="margin-top:16px; display:flex; flex-direction:column; gap:8px;"></div>
+
+    </div>
+
     <!-- STEP 3: 완료 -->
     <div id="step3" class="hidden">
       <div class="card success-card">
@@ -676,7 +931,7 @@
 
   // ── 스텝 전환 ───────────────────────────────────────────────
   function goStep(s) {
-    ['step1','step2Loading','step2Result','step3'].forEach(id => $(id).classList.add('hidden'));
+    ['step1','step2Loading','step2Result','step3','priceChartSection'].forEach(id => $(id).classList.add('hidden'));
     if (s === 1)  { $('step1').classList.remove('hidden'); }
     if (s === '2L') { $('step2Loading').classList.remove('hidden'); }
     if (s === '2R') { $('step2Result').classList.remove('hidden'); }
@@ -832,6 +1087,13 @@
     }
 
     goStep('2R');
+
+    // 시세 차트 로드
+    if (result.prediction && result.prediction.brand) {
+      fetchAndRenderChart(result.prediction.brand, result.prediction.model_name || '');
+    } else {
+      $('priceChartSection').classList.add('hidden');
+    }
   }
 
   // ── bbox 캔버스 그리기 ───────────────────────────────────────
@@ -970,6 +1232,257 @@
 
   // 초기 통계 로드
   fetchStats();
+
+  // ── 시세 차트 ───────────────────────────────────────────────
+  let _chartInstance = null;
+  let _chartData     = null;
+  let _chartMode     = 'sell'; // 'sell' | 'buy'
+
+  // 모드 토글 버튼 이벤트
+  $('modeSell').addEventListener('click', () => setChartMode('sell'));
+  $('modeBuy').addEventListener('click',  () => setChartMode('buy'));
+
+  function setChartMode(mode) {
+    _chartMode = mode;
+    $('modeSell').classList.toggle('active', mode === 'sell');
+    $('modeBuy').classList.toggle('active',  mode === 'buy');
+    if (_chartData) renderPriceChart(_chartData);
+  }
+
+  async function fetchAndRenderChart(brand, modelName) {
+    if (!brand) return;
+    const section = $('priceChartSection');
+    _chartMode = 'sell'; // 새 상품마다 초기 모드 리셋
+    $('modeSell').classList.add('active');
+    $('modeBuy').classList.remove('active');
+
+    try {
+      const resp = await fetch(
+        `${API}/api/price-chart?brand=${encodeURIComponent(brand)}&model_name=${encodeURIComponent(modelName || '')}`
+      );
+      if (!resp.ok) { section.classList.add('hidden'); return; }
+      _chartData = await resp.json();
+      section.classList.remove('hidden');
+      // 차트는 DOM이 보여진 다음 프레임에 그려야 canvas 크기가 확정됨
+      requestAnimationFrame(() => renderPriceChart(_chartData));
+    } catch (e) {
+      console.warn('시세 차트 로드 실패:', e);
+      section.classList.add('hidden');
+    }
+  }
+
+  function renderPriceChart(data) {
+    const isSell   = _chartMode === 'sell';
+    const optimal  = isSell ? data.optimal_sell : data.optimal_buy;
+    const optColor = isSell ? '#ff4d6a' : '#4dffc3';
+    const optGlow  = isSell ? '#ff4d6a' : '#4dffc3';
+
+    // ── 현재 시세 + 뱃지 ─────────────────────────────────────
+    $('chartCurrentPrice').textContent = formatPrice(data.current_price);
+
+    const b1 = $('badge1m');
+    b1.textContent = `1개월 ${data.change_1m >= 0 ? '▲' : '▼'} ${Math.abs(data.change_1m)}%`;
+    b1.className = `price-badge ${data.change_1m >= 0 ? 'up' : 'down'}`;
+
+    const b6 = $('badge6m');
+    b6.textContent = `6개월 ${data.change_6m >= 0 ? '▲' : '▼'} ${Math.abs(data.change_6m)}%`;
+    b6.className = `price-badge ${data.change_6m >= 0 ? 'up' : 'down'}`;
+
+    // ── 데이터 소스 태그 ─────────────────────────────────────
+    const tag = $('dataSourceTag');
+    tag.textContent = data.data_source || 'AI 추정';
+    tag.className = 'datasource-tag' + (data.data_source === 'Kream 실시간' ? ' live' : '');
+
+    // ── 최적 시점 바 ─────────────────────────────────────────
+    $('optimalBar').className = `optimal-bar ${isSell ? 'sell-mode' : 'buy-mode'}`;
+    $('obIcon').textContent   = isSell ? '🎯' : '🛒';
+    $('obLabel').textContent  = isSell ? '최적 매도 시점' : '최적 구매 시점';
+    $('obPrice').textContent  = formatPrice(optimal.price);
+    $('obMonth').textContent  = optimal.month;
+    const gainPct = ((optimal.price - data.current_price) / data.current_price * 100).toFixed(1);
+    $('obGain').textContent   = isSell
+      ? `+${gainPct}% 예상`
+      : (gainPct < 0 ? `현재보다 ${Math.abs(gainPct)}% 저렴` : '지금이 최저가');
+
+    // ── 범례 업데이트 ─────────────────────────────────────────
+    $('legendOptimalDot').style.cssText =
+      `background:${optColor}; box-shadow:0 0 6px ${optGlow}; width:9px; height:9px; border-radius:50%; flex-shrink:0;`;
+    $('legendOptimalText').textContent = isSell ? '최적 매도' : '최적 구매';
+
+    // ── 차트 데이터 준비 ─────────────────────────────────────
+    const histLabels = data.history.map(d => d.month);
+    const predLabels = data.prediction.map(d => d.month);
+    const allLabels  = [...histLabels, ...predLabels];
+    const n = allLabels.length;
+
+    const histPrices = data.history.map(d => d.price);
+    const predPrices = data.prediction.map(d => d.price);
+    const lastHist   = histPrices[histPrices.length - 1];
+
+    const histFull = [...histPrices, ...Array(predLabels.length).fill(null)];
+    const predFull = [...Array(histLabels.length - 1).fill(null), lastHist, ...predPrices];
+
+    const optIdx  = allLabels.indexOf(optimal.month);
+    const optFull = Array(n).fill(null);
+    if (optIdx >= 0) optFull[optIdx] = optimal.price;
+
+    // ── 가격 급변 감지 (±10% 이상) ────────────────────────────
+    const anomalyMonths = [];
+    for (let i = 1; i < data.history.length; i++) {
+      const prev = data.history[i - 1].price;
+      const curr = data.history[i].price;
+      const chg  = (curr - prev) / prev * 100;
+      if (Math.abs(chg) >= 10) {
+        anomalyMonths.push({ month: data.history[i].month, chg });
+      }
+    }
+
+    // 이벤트 카드 렌더링
+    const evBox = $('priceEvents');
+    evBox.innerHTML = '';
+    anomalyMonths.forEach(({ month, chg }) => {
+      const isUp   = chg > 0;
+      const label  = month.replace('(E)', '');
+      const year   = new Date().getFullYear();
+      const monNum = parseInt(label);
+      // 1월~현재월보다 크면 작년
+      const actualYear = monNum > new Date().getMonth() + 1 ? year - 1 : year;
+      const query  = encodeURIComponent(`${data.brand} ${actualYear}년 ${label} 가격 ${isUp ? '인상' : '인하'}`);
+      const url    = `https://search.naver.com/search.naver?where=news&query=${query}`;
+
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      card.innerHTML = `
+        <span class="event-badge ${isUp ? 'up' : 'down'}">${label} ${isUp ? '▲' : '▼'} ${Math.abs(chg).toFixed(1)}%</span>
+        <span class="event-text"><strong>${isUp ? '급등' : '급락'} 감지</strong> — 이 시기 시세 변동 원인이 있을 수 있어요.</span>
+        <a class="event-search" href="${url}" target="_blank" rel="noopener">뉴스 검색 →</a>
+      `;
+      evBox.appendChild(card);
+    });
+
+    // ── 캔버스 초기화 ─────────────────────────────────────────
+    if (_chartInstance) { _chartInstance.destroy(); _chartInstance = null; }
+
+    const canvas = $('priceChart');
+    const ctx    = canvas.getContext('2d');
+
+    const grad = ctx.createLinearGradient(0, 0, 0, 280);
+    grad.addColorStop(0, 'rgba(200,220,232,.18)');
+    grad.addColorStop(1, 'rgba(200,220,232,.0)');
+
+    const toMan = v => v === null ? null : Math.round(v / 10000);
+    const histMan = histFull.map(toMan);
+    const predMan = predFull.map(toMan);
+    const optMan  = optFull.map(toMan);
+
+    // 급변 세로선 플러그인
+    const anomalyLinePlugin = {
+      id: 'anomalyLines',
+      afterDraw(chart) {
+        const c = chart.ctx;
+        anomalyMonths.forEach(({ month, chg }) => {
+          const idx = allLabels.indexOf(month);
+          if (idx < 0) return;
+          const x = chart.scales.x.getPixelForValue(idx);
+          c.save();
+          c.strokeStyle = chg > 0 ? 'rgba(255,77,106,0.35)' : 'rgba(77,255,195,0.35)';
+          c.lineWidth = 1.5;
+          c.setLineDash([4, 4]);
+          c.beginPath();
+          c.moveTo(x, chart.chartArea.top);
+          c.lineTo(x, chart.chartArea.bottom);
+          c.stroke();
+          c.restore();
+        });
+      },
+    };
+
+    _chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: allLabels,
+        datasets: [
+          {
+            label: '과거 시세',
+            data: histMan,
+            borderColor: '#c8dce8',
+            backgroundColor: grad,
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: '#c8dce8',
+            tension: 0.3,
+            fill: true,
+            spanGaps: false,
+          },
+          {
+            label: 'AI 예측',
+            data: predMan,
+            borderColor: '#4dffc3',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [7, 4],
+            pointRadius: 3,
+            pointBackgroundColor: '#4dffc3',
+            tension: 0.3,
+            fill: false,
+            spanGaps: false,
+          },
+          {
+            label: isSell ? '최적 매도' : '최적 구매',
+            data: optMan,
+            borderColor: 'rgba(0,0,0,0)',
+            showLine: false,
+            fill: false,
+            pointRadius: ctx2 => ctx2.dataIndex === optIdx ? 10 : 0,
+            pointHoverRadius: 12,
+            pointBackgroundColor: optColor,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2.5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f1d2e',
+            borderColor: '#1e3452',
+            borderWidth: 1,
+            padding: 10,
+            callbacks: {
+              label: ctx2 => {
+                if (ctx2.raw === null) return null;
+                return ` ${ctx2.dataset.label}: ${ctx2.raw.toLocaleString()}만원`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(30,52,82,.5)', drawTicks: false },
+            ticks: { color: '#7a9abf', font: { size: 11 }, maxRotation: 0 },
+          },
+          y: {
+            grid: { color: 'rgba(30,52,82,.5)', drawTicks: false },
+            ticks: {
+              color: '#7a9abf',
+              font: { size: 11 },
+              callback: v => `₩${v.toLocaleString()}만`,
+            },
+          },
+        },
+      },
+      plugins: [anomalyLinePlugin],
+    });
+  }
+
+  function formatPrice(won) {
+    const man = Math.round(won / 10000);
+    return `₩${man.toLocaleString()}만`;
+  }
 </script>
 </body>
 </html>
