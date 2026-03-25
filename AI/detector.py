@@ -141,7 +141,89 @@ _clip_processor          = None
 _yolo_detector           = None   # yolov8n.pt (bbox 탐지 전용)
 _embeddings              = None   # shape: (N, 512)
 _labels                  = None   # list of {"brand": ..., "model": ...}
-_brand_text_embeddings   = None   # {brand_ko: np.ndarray} CLIP 텍스트 임베딩 캐시
+_brand_text_embeddings   = None   # {brand_ko: np.ndarray} CLIP 이미지 프로토타입 캐시
+_brand_zeroshot_cache    = None   # {brand: np.ndarray} CLIP 텍스트 임베딩 캐시 (zero-shot)
+
+# ── 브랜드별 시각적 특징 프롬프트 (Zero-shot CLIP 분류용) ──────────
+_BRAND_VISUAL_PROMPTS: dict[str, list[str]] = {
+    "Bottega Veneta": [
+        "a Bottega Veneta bag with intrecciato woven leather pattern",
+        "a luxury bag with tightly woven intrecciato leather weave and no visible logo",
+        "Bottega Veneta intrecciato woven bag sage green tan black leather",
+        "a high-end bag made entirely of interlaced woven leather strips",
+    ],
+    "Chanel": [
+        "a Chanel quilted leather bag with CC logo and gold chain strap",
+        "a Chanel classic flap bag with diamond quilted pattern",
+        "a black quilted Chanel bag with interlocking CC clasp",
+        "a Chanel luxury handbag with quilted leather and chain handle",
+    ],
+    "Louis Vuitton": [
+        "a Louis Vuitton bag with LV monogram canvas pattern brown beige",
+        "a Louis Vuitton monogram brown canvas luxury handbag",
+        "a Louis Vuitton damier or monogram pattern bag",
+        "a Louis Vuitton Neverfull or Speedy bag with LV logo pattern",
+    ],
+    "Gucci": [
+        "a Gucci bag with GG logo pattern or green red green stripe",
+        "a Gucci luxury bag with GG monogram canvas pattern",
+        "a Gucci Marmont bag with double G logo and quilted leather",
+        "a Gucci bag with bamboo handle or horse bit hardware",
+    ],
+    "Hermès": [
+        "a Hermes Birkin or Kelly bag structured leather box with lock and keys",
+        "a Hermes luxury bag with saddle stitch and turn lock clasp",
+        "a Hermes bag with orange dust bag and iconic structured silhouette",
+        "a Hermes Birkin bag with palladium or gold hardware and padlock",
+    ],
+    "Prada": [
+        "a Prada bag with saffiano cross-grain leather texture and triangle metal logo plate",
+        "a Prada luxury bag with triangular enamel logo plaque",
+        "a Prada Re-Edition nylon bag with triangle logo",
+        "a Prada Galleria bag with saffiano leather and silver hardware",
+    ],
+    "Dior": [
+        "a Dior bag with cannage quilting pattern and CD charm",
+        "a Lady Dior bag with quilted cannage leather and D.I.O.R charms",
+        "a Dior book tote bag with colorful embroidery pattern",
+        "a Dior saddle bag with D shape and CD logo",
+    ],
+    "Fendi": [
+        "a Fendi baguette bag with FF zucca logo pattern",
+        "a Fendi bag with double F logo pattern and structured silhouette",
+        "a Fendi Peekaboo bag with structured double compartment",
+        "a Fendi luxury bag with FF monogram canvas or leather",
+    ],
+    "Balenciaga": [
+        "a Balenciaga city bag with giant metal studs and oversized zipper pull",
+        "a Balenciaga hourglass bag with structured hourglass silhouette",
+        "a Balenciaga bag with oversized hardware and distressed leather",
+        "a Balenciaga luxury bag with deconstructed silhouette and metal hardware",
+    ],
+    "Saint Laurent": [
+        "a Saint Laurent YSL bag with gold YSL logo and minimal structured design",
+        "a Saint Laurent Loulou bag with matelasse quilted leather YSL clasp",
+        "a Saint Laurent Kate bag with tassel and YSL logo",
+        "a Saint Laurent luxury bag with minimal chic design",
+    ],
+    "Celine": [
+        "a Celine bag with minimal clean design and Arc de Triomphe hardware",
+        "a Celine luggage tote bag with structured boxy shape",
+        "a Celine Triomphe bag with minimal elegant design",
+        "a Celine luxury bag with understated logo and structured silhouette",
+    ],
+    "Loewe": [
+        "a Loewe puzzle bag with geometric interlocking shape",
+        "a Loewe bag with Anagram logo pattern or puzzle geometric structure",
+        "a Loewe Hammock or Gate bag with leather woven handles",
+        "a Loewe luxury bag with geometric leather patchwork",
+    ],
+    "Burberry": [
+        "a Burberry bag with signature beige plaid check nova pattern",
+        "a Burberry luxury bag with plaid tartan check fabric",
+        "a Burberry bag with house check pattern and leather trim",
+    ],
+}
 
 
 # ── 브랜드 카탈로그 (Mock용) ────────────────────────────────────
@@ -248,31 +330,6 @@ async def _build_brand_text_embeddings() -> bool:
     print(f"[ReCheck] 브랜드 prototype 생성 완료: {len(prototypes)}개 브랜드")
     return True
 
-
-def _classify_brand_by_text(query_emb: np.ndarray) -> Optional[str]:
-    """
-    CLIP 이미지 임베딩과 텍스트 브랜드 임베딩의 코사인 유사도로 브랜드 분류.
-    임베딩 DB에 존재하는 브랜드 중 가장 유사한 브랜드명(원본 한국어/영문)을 반환.
-    """
-    if _brand_text_embeddings is None:
-        return None
-
-    best_brand = None
-    best_score = -1.0
-
-    for brand_ko, text_emb in _brand_text_embeddings.items():
-        score = float(np.dot(query_emb, text_emb))
-        if score > best_score:
-            best_score = score
-            best_brand = brand_ko
-
-    # 상위 5개 브랜드 점수 출력 (진단용)
-    sorted_brands = sorted(_brand_text_embeddings.items(),
-                           key=lambda x: float(np.dot(query_emb, x[1])), reverse=True)
-    print("[ReCheck] 브랜드 유사도 상위 5:")
-    for b, emb in sorted_brands[:5]:
-        print(f"   {b}: {float(np.dot(query_emb, emb)):.4f}")
-    return best_brand
 
 
 # ── CLIP 모델 로드 ───────────────────────────────────────────────
@@ -382,6 +439,61 @@ async def add_embedding(image_b64: str, brand: str, model_name: str) -> bool:
     except Exception as e:
         print(f"[ReCheck] 임베딩 추가 실패: {e}")
         return False
+
+
+# ── 텍스트 → CLIP 임베딩 추출 ───────────────────────────────────
+async def _get_text_embedding(text: str) -> Optional[np.ndarray]:
+    if _clip_model is None or _clip_processor is None:
+        return None
+    import torch
+    loop = asyncio.get_event_loop()
+
+    def _infer():
+        inputs = _clip_processor(text=[text], return_tensors="pt", padding=True)
+        with torch.no_grad():
+            features = _clip_model.get_text_features(**inputs)
+            if not isinstance(features, torch.Tensor):
+                features = features.pooler_output
+            features = features / features.norm(dim=-1, keepdim=True)
+        return features[0].cpu().numpy()
+
+    return await loop.run_in_executor(None, _infer)
+
+
+# ── Zero-shot 브랜드 분류 (텍스트 임베딩 vs 이미지 임베딩) ──────
+async def _classify_brand_zeroshot(query_emb: np.ndarray) -> Optional[str]:
+    """
+    CLIP 텍스트 임베딩으로 브랜드 분류.
+    임베딩 DB 없이도 작동 (zero-shot).
+    """
+    global _brand_zeroshot_cache
+
+    # 최초 1회만 텍스트 임베딩 계산 후 캐시
+    if _brand_zeroshot_cache is None:
+        cache = {}
+        for brand, prompts in _BRAND_VISUAL_PROMPTS.items():
+            embs = []
+            for prompt in prompts:
+                emb = await _get_text_embedding(prompt)
+                if emb is not None:
+                    embs.append(emb)
+            if embs:
+                avg = np.mean(embs, axis=0)
+                avg = avg / np.linalg.norm(avg)
+                cache[brand] = avg
+        _brand_zeroshot_cache = cache
+        print(f"[ReCheck] Zero-shot 브랜드 텍스트 임베딩 생성 완료: {len(cache)}개")
+
+    if not _brand_zeroshot_cache:
+        return None
+
+    scores = {brand: float(np.dot(query_emb, emb))
+              for brand, emb in _brand_zeroshot_cache.items()}
+    sorted_brands = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    print("[ReCheck] Zero-shot 브랜드 유사도 상위 5:")
+    for b, s in sorted_brands[:5]:
+        print(f"   {b}: {s:.4f}")
+    return sorted_brands[0][0]
 
 
 # ── 이미지 → CLIP 임베딩 추출 ───────────────────────────────────
@@ -550,11 +662,7 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
         return _mock_result(image_bytes)
 
     if _embeddings is None:
-        if not _load_embeddings():
-            return _mock_result(image_bytes)
-
-    # 브랜드 텍스트 임베딩 준비 (최초 1회 생성)
-    await _build_brand_text_embeddings()
+        _load_embeddings()  # 실패해도 zero-shot으로 계속 진행
 
     query_emb = await _get_image_embedding(image)
     if query_emb is None:
@@ -562,6 +670,8 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
 
     # ── 근사 캐시 히트: 유사도 0.97 이상인 저장 임베딩 있으면 바로 반환 ──
     if _embeddings is not None and len(_embeddings) > 0:
+        # 브랜드 이미지 프로토타입 준비
+        await _build_brand_text_embeddings()
         sims = _embeddings @ query_emb
         best_idx = int(np.argmax(sims))
         if float(sims[best_idx]) >= 0.97:
@@ -584,20 +694,27 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
                 "message": f"AI가 '{hit_brand} {hit_model}'으로 추측했습니다. (신뢰도 {int(confidence * 100)}%)"
             }
 
-    # 브랜드 분류 (CLIP 이미지↔텍스트 유사도)
-    detected_brand = _classify_brand_by_text(query_emb)
+    # ── 브랜드 분류: Zero-shot CLIP (이미지 vs 텍스트 설명) ─────────
+    # 임베딩 DB 없이도 작동하는 기본 경로
+    brand = await _classify_brand_zeroshot(query_emb)
 
-    if detected_brand:
-        # 해당 브랜드 내에서만 모델 검색
-        top3, model_confident = _search_model_in_brand(query_emb, detected_brand, top_k=3)
-        brand = BRAND_KO_TO_EN.get(detected_brand, detected_brand)
-    else:
-        # fallback: 전체 DB 검색
-        top3, model_confident = _search_similar(query_emb, top_k=3)
-        raw_brand = top3[0]["brand"] if top3 else None
-        brand = BRAND_KO_TO_EN.get(raw_brand, raw_brand) if raw_brand else None
+    # 임베딩 DB가 있으면 해당 브랜드 내 모델 검색, 없으면 모델명 None
+    top3: list[dict] = []
+    model_confident = False
+    if brand and _embeddings is not None and len(_embeddings) > 0:
+        # DB에서 브랜드 프로토타입으로 재확인 후 모델 검색
+        detected_brand_ko = next(
+            (ko for ko, en in BRAND_KO_TO_EN.items() if en == brand), brand
+        )
+        top3, model_confident = _search_model_in_brand(query_emb, detected_brand_ko, top_k=3)
+        for item in top3:
+            item["brand"] = BRAND_KO_TO_EN.get(item["brand"], item["brand"])
+            item["model_name"] = _translate_model_name(item["model_name"])
+    elif brand:
+        # DB 없음 → 브랜드만 반환, 모델명은 None
+        top3 = [{"brand": brand, "model_name": None, "score": 0.0}]
 
-    if not top3:
+    if not top3 or not brand:
         return {
             "detected": False,
             "bbox": bbox,
@@ -630,4 +747,131 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
             if not model_confident else
             f"AI가 '{brand} {best['model_name']}'으로 추측했습니다. (신뢰도 {int(confidence * 100)}%)"
         )
+    }
+
+
+# ── 상태 등급 평가 (CLIP 텍스트 유사도) ──────────────────────────
+# 각 등급의 시각적 특징을 CLIP이 이해할 수 있는 영문 텍스트로 표현
+_CONDITION_PROMPTS = {
+    "S": [
+        "a luxury bag in perfect mint condition, brand new appearance, no scratches, no stains, pristine surface",
+        "an unused luxury handbag with original shine, flawless leather, zero visible wear",
+    ],
+    "A": [
+        "a luxury bag in excellent used condition, minimal light scratches, clean interior, slight wear on corners",
+        "a gently used designer handbag, very good condition, minor surface marks, no significant damage",
+    ],
+    "B": [
+        "a luxury bag with moderate wear, visible scratches on corners, some scuffs, minor stains on surface",
+        "a used designer bag showing normal wear, faded hardware, light marks on leather, acceptable condition",
+    ],
+    "C": [
+        "a heavily used luxury bag with significant scratches, deep scuffs, noticeable stains, worn out hardware",
+        "a damaged designer handbag, heavy discoloration, broken zipper or strap, major surface damage",
+    ],
+}
+
+_condition_text_embeddings: Optional[dict] = None
+
+
+async def _build_condition_embeddings():
+    """등급별 텍스트 프롬프트 CLIP 임베딩 사전 계산"""
+    global _condition_text_embeddings
+    if _condition_text_embeddings is not None:
+        return True
+    if not await _load_clip():
+        return False
+
+    import torch
+    loop = asyncio.get_event_loop()
+
+    def _encode():
+        result = {}
+        for grade, prompts in _CONDITION_PROMPTS.items():
+            inputs = _clip_processor(text=prompts, return_tensors="pt", padding=True, truncation=True)
+            with torch.no_grad():
+                embs = _clip_model.get_text_features(**inputs)
+                embs = embs / embs.norm(dim=-1, keepdim=True)
+                result[grade] = embs.mean(dim=0).cpu().numpy()
+        return result
+
+    try:
+        _condition_text_embeddings = await loop.run_in_executor(None, _encode)
+        print("[ReCheck] 상태 등급 임베딩 빌드 완료")
+        return True
+    except Exception as e:
+        print(f"[ReCheck] 상태 임베딩 빌드 실패: {e}")
+        return False
+
+
+async def assess_condition(image_bytes: bytes) -> dict:
+    """
+    이미지 → 상태 등급(S/A/B/C) + 점수 + 세부 분석 반환
+    CLIP이 없으면 mock 반환
+    """
+    import random as _rnd
+
+    # Mock 모드
+    if _USE_MOCK or not await _load_clip():
+        grade = _rnd.choice(["S", "A", "A", "B", "B", "C"])
+        scores = {"S": 0.15, "A": 0.45, "B": 0.30, "C": 0.10}
+        scores[grade] += 0.25
+        total = sum(scores.values())
+        scores = {k: round(v / total, 3) for k, v in scores.items()}
+        return _format_condition_result(grade, scores, mode="mock")
+
+    # 등급 임베딩 준비
+    await _build_condition_embeddings()
+    if _condition_text_embeddings is None:
+        return _format_condition_result("A", {}, mode="mock")
+
+    import torch
+    loop = asyncio.get_event_loop()
+
+    def _infer():
+        img = PILImage.open(io.BytesIO(image_bytes)).convert("RGB")
+        inputs = _clip_processor(images=img, return_tensors="pt")
+        with torch.no_grad():
+            img_emb = _clip_model.get_image_features(**inputs)
+            img_emb = img_emb / img_emb.norm(dim=-1, keepdim=True)
+            img_emb = img_emb.cpu().numpy()[0]
+
+        # 각 등급과 코사인 유사도 계산
+        raw_scores = {}
+        for grade, text_emb in _condition_text_embeddings.items():
+            raw_scores[grade] = float(np.dot(img_emb, text_emb))
+
+        # softmax로 확률 변환
+        import math
+        temperature = 0.05
+        exp_scores = {k: math.exp(v / temperature) for k, v in raw_scores.items()}
+        total = sum(exp_scores.values())
+        probs = {k: round(v / total, 3) for k, v in exp_scores.items()}
+
+        best_grade = max(probs, key=probs.get)
+        return best_grade, probs
+
+    try:
+        best_grade, probs = await loop.run_in_executor(None, _infer)
+        return _format_condition_result(best_grade, probs, mode="real")
+    except Exception as e:
+        print(f"[ReCheck] 상태 평가 실패: {e}")
+        return _format_condition_result("A", {}, mode="mock")
+
+
+def _format_condition_result(grade: str, probs: dict, mode: str) -> dict:
+    GRADE_INFO = {
+        "S": {"label": "거의 새것",   "desc": "스크래치·오염 없음, 새제품에 가까운 상태",   "color": "#4dffc3"},
+        "A": {"label": "사용감 적음", "desc": "미세한 사용감, 눈에 띄는 손상 없음",          "color": "#4dffc3"},
+        "B": {"label": "사용감 있음", "desc": "모서리 스크래치·하드웨어 마모 확인됨",         "color": "#ffd166"},
+        "C": {"label": "사용감 많음", "desc": "눈에 띄는 스크래치·오염·변색 있음",           "color": "#ff4d6a"},
+    }
+    info = GRADE_INFO.get(grade, GRADE_INFO["A"])
+    return {
+        "grade": grade,
+        "label": info["label"],
+        "desc": info["desc"],
+        "color": info["color"],
+        "scores": probs,
+        "mode": mode,
     }

@@ -350,33 +350,94 @@
       margin-bottom: 20px;
     }
 
-    .form-group label {
+    .form-group label, .form-field label {
       font-size: 12px;
       color: var(--text-muted);
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: .6px;
     }
 
-    .form-group input, .form-group select {
+    .form-group input, .form-group select,
+    .form-field input, .form-field select,
+    .form-input {
       width: 100%;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-group input:focus, .form-group select:focus,
+    .form-field input:focus, .form-field select:focus,
+    .form-input:focus {
+      border-color: var(--mint);
+      box-shadow: 0 0 0 3px rgba(77,255,195,.1);
+    }
+
+    .form-group select option,
+    .form-field select option { background: var(--surface); }
+
+    .form-field { margin-bottom: 20px; }
+
+    /* ── 가격 분석 폼 전용 ───────────────────────────── */
+    .pc-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .pc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .pc-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      margin-bottom: 8px;
+    }
+
+    .pc-field select, .pc-field input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
       color: var(--text);
       font-size: 14px;
       font-family: inherit;
       outline: none;
-      transition: border-color .2s;
+      transition: border-color .2s, box-shadow .2s;
     }
 
-    .form-group input:focus, .form-group select:focus {
+    .pc-field select:focus, .pc-field input:focus {
       border-color: var(--mint);
+      box-shadow: 0 0 0 3px rgba(77,255,195,.1);
     }
 
-    .form-group select option { background: var(--surface2); }
+    .pc-field select option { background: var(--surface); }
+
+    .pc-field input::placeholder { color: var(--text-muted); }
+
+    .cond-upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+    }
+
+    .cond-upload-zone:hover { border-color: var(--mint); background: rgba(77,255,195,.03); }
+
+    .cond-upload-zone input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    }
 
     /* ── 성공 상태 ───────────────────────────────────── */
     .success-card {
@@ -680,6 +741,134 @@
       width: 100%;
       height: 260px;
     }
+
+    /* ── 탭 네비게이션 ───────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 5px;
+      margin-bottom: 32px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    .tab-btn.active {
+      background: var(--surface2);
+      color: var(--mint);
+      border: 1px solid var(--border);
+    }
+    .tab-btn:not(.active):hover { color: var(--text); }
+
+    /* ── 신호등 ──────────────────────────────────────────── */
+    .traffic-light {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin: 28px 0;
+    }
+    .tl-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      opacity: .2;
+      transition: all .4s;
+      border: 2px solid transparent;
+    }
+    .tl-circle.active-safe   { opacity: 1; background: rgba(77,255,195,.15); border-color: #4dffc3; box-shadow: 0 0 24px rgba(77,255,195,.5); }
+    .tl-circle.active-caution { opacity: 1; background: rgba(255,209,102,.15); border-color: #ffd166; box-shadow: 0 0 24px rgba(255,209,102,.5); }
+    .tl-circle.active-danger  { opacity: 1; background: rgba(255,77,106,.15); border-color: #ff4d6a; box-shadow: 0 0 24px rgba(255,77,106,.5); }
+
+    .risk-label {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 6px;
+    }
+    .risk-label.safe    { color: #4dffc3; }
+    .risk-label.caution { color: #ffd166; }
+    .risk-label.danger  { color: #ff4d6a; }
+
+    .risk-sub {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .reason-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .reason-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    .reason-item.good  { border-left: 3px solid #4dffc3; }
+    .reason-item.warn  { border-left: 3px solid #ffd166; }
+    .reason-item.bad   { border-left: 3px solid #ff4d6a; }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .trust-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .trust-card .tc-icon { font-size: 22px; margin-bottom: 6px; }
+    .trust-card .tc-label { font-size: 11px; color: var(--text-muted); }
+    .trust-card .tc-value { font-size: 13px; font-weight: 600; margin-top: 4px; }
+    .trust-card .tc-value.ok  { color: #4dffc3; }
+    .trust-card .tc-value.no  { color: #ff4d6a; }
+
+    .url-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .url-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .url-input:focus { border-color: var(--mint); }
+    .url-input::placeholder { color: var(--text-muted); }
   </style>
 </head>
 <body>
@@ -697,6 +886,15 @@
   </header>
 
   <main>
+
+    <!-- 탭 네비게이션 -->
+    <div class="tab-nav">
+      <button class="tab-btn active" id="tabScanner" onclick="switchTab('scanner')">📸 물품 스캐너</button>
+      <button class="tab-btn" id="tabFraud" onclick="switchTab('fraud')">🚦 사기 탐지기</button>
+    </div>
+
+    <!-- ══════════════ 물품 스캐너 탭 ══════════════ -->
+    <div id="scannerSection">
 
     <!-- 스텝 표시 -->
     <div class="steps">
@@ -906,11 +1104,356 @@
       </div>
     </div>
 
+    </div> <!-- /scannerSection -->
+
+    <!-- ══════════════ 가격 분석 탭 ══════════════ -->
+    <div id="fraudSection" class="hidden">
+      <div class="card">
+        <div class="card-title">💰 가격 이상 탐지 · 최적가 가이드</div>
+        <div class="card-sub">브랜드, 모델명, 판매가를 입력하면 시세 대비 적정 여부와 최적 거래 타이밍을 알려드립니다.</div>
+
+        <!-- 입력 폼 -->
+        <div id="priceCheckForm">
+          <div class="pc-form">
+
+            <!-- 브랜드 + 모델명 -->
+            <div class="pc-row">
+              <div class="pc-field">
+                <label>브랜드</label>
+                <select id="pcBrand">
+                  <option value="">선택하세요</option>
+                  <option>Chanel</option><option>Louis Vuitton</option>
+                  <option>Gucci</option><option>Hermes</option>
+                  <option>Prada</option><option>Dior</option>
+                  <option>Fendi</option><option>Balenciaga</option>
+                  <option>Bottega Veneta</option><option>Saint Laurent</option>
+                  <option>Celine</option><option>Loewe</option>
+                  <option>Burberry</option><option>Tiffany</option><option>Cartier</option>
+                </select>
+              </div>
+              <div class="pc-field">
+                <label>모델명</label>
+                <input id="pcModel" type="text" placeholder="Classic Flap, Neverfull MM …" onkeydown="if(event.key==='Enter')event.preventDefault()" />
+              </div>
+            </div>
+
+            <!-- 판매가 -->
+            <div class="pc-field">
+              <label>판매가 (원)</label>
+              <input id="pcPrice" type="number" placeholder="예: 1,500,000" min="0" onkeydown="if(event.key==='Enter')event.preventDefault()" />
+            </div>
+
+            <!-- 상태 등급 — AI 사진 평가만 사용 -->
+            <input type="hidden" id="pcCondition" value="" />
+            <div class="pc-field">
+              <label>상태 등급 — AI 자동 평가</label>
+              <div class="cond-upload-zone" onclick="document.getElementById('condImgInput').click()">
+                <input type="file" id="condImgInput" accept="image/*" onchange="autoAssessCondition(this)" />
+                <div id="condUploadInner">
+                  <div style="font-size:28px; margin-bottom:8px;">📸</div>
+                  <div style="font-size:13px; font-weight:600;">상품 사진 업로드</div>
+                  <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">브랜드·모델명 자동 인식 + S~C 등급 자동 부여</div>
+                </div>
+              </div>
+              <div id="condResult" style="display:none; margin-top:12px; padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; font-size:13px;"></div>
+            </div>
+
+            <button type="button" class="btn btn-primary" style="width:100%; padding:16px; font-size:15px;" onclick="runPriceCheck()">분석하기</button>
+          </div>
+        </div>
+
+        <!-- 로딩 -->
+        <div id="pcLoading" class="hidden" style="text-align:center; padding:40px 0;">
+          <div class="spinner" style="margin:0 auto 16px;"></div>
+          <p>시세를 조회하는 중...</p>
+        </div>
+
+        <!-- 에러 메시지 -->
+        <div id="pcError" class="hidden" style="padding:24px; background:rgba(255,77,106,.08); border:1px solid rgba(255,77,106,.3); border-radius:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:8px;">⚠️</div>
+          <div id="pcErrorMsg" style="font-size:13px; color:#ff7a8a; margin-bottom:16px;"></div>
+          <button type="button" class="btn btn-ghost" style="padding:8px 20px;" onclick="resetPriceCheck()">다시 시도</button>
+        </div>
+
+        <!-- 결과 -->
+        <div id="pcResult" class="hidden">
+          <!-- 신호등 -->
+          <div class="traffic-light">
+            <div class="tl-circle" id="pcTlSafe">✅</div>
+            <div class="tl-circle" id="pcTlCaution">⚠️</div>
+            <div class="tl-circle" id="pcTlDanger">🚨</div>
+          </div>
+          <div class="risk-label" id="pcRiskLabel">—</div>
+          <div class="risk-sub" id="pcSignal">—</div>
+
+          <!-- 가격 비교 카드 3개 -->
+          <div class="trust-grid" style="margin-top:20px;">
+            <div class="trust-card">
+              <div class="tc-icon">📊</div>
+              <div class="tc-label">현재 시세</div>
+              <div class="tc-value ok" id="pcMarketPrice">—</div>
+            </div>
+            <div class="trust-card">
+              <div class="tc-icon">🎯</div>
+              <div class="tc-label">적정가 범위</div>
+              <div class="tc-value ok" id="pcFairRange">—</div>
+            </div>
+            <div class="trust-card">
+              <div class="tc-icon">🏷️</div>
+              <div class="tc-label">판매가</div>
+              <div class="tc-value" id="pcAskingPrice">—</div>
+            </div>
+          </div>
+
+          <!-- 가이드 메시지 -->
+          <div class="ai-bubble" style="margin-top:20px;">
+            <span class="icon">💡</span>
+            <div id="pcGuide">—</div>
+          </div>
+
+          <!-- 최적 타이밍 -->
+          <div style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="trust-card" style="text-align:left; padding:16px;">
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">📈 판매자라면</div>
+              <div style="font-weight:700; color:var(--mint);" id="pcSellMonth">—</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;" id="pcSellGain">—</div>
+            </div>
+            <div class="trust-card" style="text-align:left; padding:16px;">
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">🛒 구매자라면</div>
+              <div style="font-weight:700; color:#ffd166;" id="pcBuyMonth">—</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;" id="pcBuySave">—</div>
+            </div>
+          </div>
+
+          <!-- 데이터 출처 -->
+          <div style="margin-top:12px; font-size:11px; color:var(--text-muted); text-align:right;" id="pcSource">—</div>
+
+          <button class="btn btn-ghost" style="margin-top:20px; width:100%;" onclick="resetPriceCheck()">↩ 다시 분석하기</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
 <script>
   const API = 'http://localhost:8000'; // 백엔드 주소 (배포 시 교체)
+
+  // ── 탭 전환 ─────────────────────────────────────────────────
+  function switchTab(tab) {
+    const isScanner = tab === 'scanner';
+    document.getElementById('scannerSection').classList.toggle('hidden', !isScanner);
+    document.getElementById('fraudSection').classList.toggle('hidden', isScanner);
+    document.getElementById('tabScanner').classList.toggle('active', isScanner);
+    document.getElementById('tabFraud').classList.toggle('active', !isScanner);
+  }
+
+  // ── 가격 이상 탐지 ───────────────────────────────────────────
+  async function runPriceCheck() {
+    // 항상 사기 탐지 탭에 머물도록 보장
+    switchTab('fraud');
+
+    const brand = document.getElementById('pcBrand').value.trim();
+    const model = document.getElementById('pcModel').value.trim();
+    const price = parseInt(document.getElementById('pcPrice').value);
+    const condition = document.getElementById('pcCondition').value;
+
+    if (!brand) return alert('브랜드를 선택해 주세요.');
+    if (!model) return alert('모델명을 입력해 주세요.');
+    if (!price || price <= 0) return alert('판매가를 입력해 주세요.');
+    if (!condition) return alert('상품 사진을 업로드하면 AI가 상태 등급을 자동으로 평가합니다.');
+
+    document.getElementById('pcLoading').classList.remove('hidden');
+    document.getElementById('pcResult').classList.add('hidden');
+    document.getElementById('priceCheckForm').classList.add('hidden');
+
+    const showError = (msg) => {
+      document.getElementById('pcLoading').classList.add('hidden');
+      document.getElementById('pcErrorMsg').textContent = msg;
+      document.getElementById('pcError').classList.remove('hidden');
+    };
+
+    let data;
+    try {
+      const resp = await fetch(`${API}/api/price-check`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ brand, model_name: model, asking_price: price, condition }),
+      });
+      if (!resp.ok) {
+        const errBody = await resp.text().catch(() => '');
+        throw new Error(`서버 오류 ${resp.status}${errBody ? ': ' + errBody.slice(0, 80) : ''}`);
+      }
+      data = await resp.json();
+    } catch (e) {
+      showError(e.message.includes('Failed to fetch')
+        ? '백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인하세요.'
+        : e.message);
+      return;
+    }
+
+    document.getElementById('pcLoading').classList.add('hidden');
+
+    try {
+      renderPriceCheck(data);
+    } catch (e) {
+      console.error('결과 렌더링 오류:', e, data);
+      showError('결과를 표시하는 중 오류가 발생했습니다: ' + e.message);
+    }
+  }
+
+  function renderPriceCheck(d) {
+    const { level, signal, guide, market_price, fair_min, fair_max, asking_price,
+            optimal_sell, optimal_buy, sell_gain, buy_save, data_source } = d;
+
+    // 신호등
+    document.getElementById('pcTlSafe').className    = 'tl-circle' + (level === 'safe'    ? ' active-safe'    : '');
+    document.getElementById('pcTlCaution').className = 'tl-circle' + (level === 'caution' ? ' active-caution' : '');
+    document.getElementById('pcTlDanger').className  = 'tl-circle' + (level === 'danger'  ? ' active-danger'  : '');
+
+    const LABEL = { safe: '적정가', caution: '주의', danger: '위험' };
+    const labelEl = document.getElementById('pcRiskLabel');
+    labelEl.textContent = LABEL[level];
+    labelEl.className = `risk-label ${level}`;
+    document.getElementById('pcSignal').textContent = signal;
+
+    // 가격 카드
+    document.getElementById('pcMarketPrice').textContent = `₩${Math.round(market_price/10000).toLocaleString()}만`;
+    document.getElementById('pcFairRange').textContent =
+      `₩${Math.round(fair_min/10000).toLocaleString()}만 ~ ₩${Math.round(fair_max/10000).toLocaleString()}만`;
+
+    const askEl = document.getElementById('pcAskingPrice');
+    askEl.textContent = `₩${Math.round(asking_price/10000).toLocaleString()}만`;
+    askEl.className = 'tc-value ' + (level === 'safe' ? 'ok' : level === 'danger' ? 'no' : '');
+
+    // 가이드
+    document.getElementById('pcGuide').textContent = guide;
+
+    // 최적 타이밍
+    document.getElementById('pcSellMonth').textContent = `${optimal_sell.month} 매도 추천`;
+    document.getElementById('pcSellGain').textContent = sell_gain >= 0
+      ? `지금보다 ${sell_gain}% 높은 가격 예상`
+      : `현재가 고점에 가까움`;
+    document.getElementById('pcBuyMonth').textContent = `${optimal_buy.month} 구매 추천`;
+    document.getElementById('pcBuySave').textContent = buy_save > 0
+      ? `지금보다 ${buy_save}% 저렴하게 살 수 있음`
+      : `지금이 최적 구매 시점`;
+
+    document.getElementById('pcSource').textContent = `시세 출처: ${data_source}`;
+    document.getElementById('pcResult').classList.remove('hidden');
+  }
+
+  function resetPriceCheck() {
+    document.getElementById('pcResult').classList.add('hidden');
+    document.getElementById('pcError').classList.add('hidden');
+    document.getElementById('priceCheckForm').classList.remove('hidden');
+    // 입력 필드 초기화
+    document.getElementById('pcBrand').value = '';
+    document.getElementById('pcModel').value = '';
+    document.getElementById('pcPrice').value = '';
+    // 상태 평가 초기화
+    document.getElementById('pcCondition').value = '';
+    document.getElementById('condImgInput').value = '';
+    document.getElementById('condResult').style.display = 'none';
+    document.getElementById('condUploadInner').innerHTML = `
+      <div style="font-size:28px; margin-bottom:8px;">📸</div>
+      <div style="font-size:13px; font-weight:600;">상품 사진 업로드</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">브랜드·모델명 자동 인식 + S~C 등급 자동 부여</div>
+    `;
+  }
+
+  // ── 사진 업로드 → 브랜드/모델 인식 + 상태 평가 동시 실행 ──────
+  async function autoAssessCondition(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const resultEl = document.getElementById('condResult');
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = '<span style="color:var(--text-muted)">🔍 AI 분석 중...</span>';
+    document.getElementById('condUploadInner').innerHTML = `
+      <div class="spinner" style="margin:0 auto 8px;"></div>
+      <div style="font-size:12px; color:var(--text-muted);">분석 중...</div>
+    `;
+
+    // FormData를 각 요청마다 별도 생성 (하나로 두 번 쓸 수 없음)
+    const fd1 = new FormData(); fd1.append('file', file);
+    const fd2 = new FormData(); fd2.append('file', file);
+
+    // 브랜드/모델 인식 + 상태 평가 동시 호출
+    let detectData, cond;
+    try {
+      [detectData, cond] = await Promise.all([
+        fetch(`${API}/api/detect`,           { method: 'POST', body: fd1 }).then(r => r.json()),
+        fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd2 }).then(r => r.json()),
+      ]);
+    } catch (e) {
+      resultEl.innerHTML = '<span style="color:var(--red)">분석 실패 — 백엔드 연결을 확인하세요.</span>';
+      document.getElementById('condUploadInner').innerHTML = `
+        <div style="font-size:28px; margin-bottom:8px;">📸</div>
+        <div style="font-size:13px; font-weight:600;">상품 사진 업로드</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">브랜드·모델명 자동 인식 + S~C 등급 자동 부여</div>
+      `;
+      return;
+    }
+
+    // ── 브랜드/모델 자동 채우기 (비어있는 경우만) ──────────────
+    if (detectData?.detected && detectData.prediction) {
+      const pred = detectData.prediction;
+      const brandEl = document.getElementById('pcBrand');
+      const modelEl = document.getElementById('pcModel');
+      if (pred.brand && !brandEl.value) brandEl.value = pred.brand;
+      if (pred.model_name && !modelEl.value.trim()) modelEl.value = pred.model_name;
+    }
+
+    if (cond) {
+      const { grade, label, desc, color, scores, mode } = cond;
+      document.getElementById('pcCondition').value = grade;
+
+      document.getElementById('condUploadInner').innerHTML = `
+        <div style="font-size:26px; margin-bottom:6px;">✅</div>
+        <div style="font-size:13px; font-weight:700; color:${color};">${grade}등급 — ${label}</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">클릭해서 다시 평가</div>
+      `;
+
+      const GRADES = ['S', 'A', 'B', 'C'];
+      const bars = GRADES.map(g => {
+        const pct = Math.round((scores[g] || 0) * 100);
+        const active = g === grade ? `font-weight:700; color:${color};` : 'color:var(--text-muted);';
+        return `<div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <span style="width:14px; font-size:12px; ${active}">${g}</span>
+          <div style="flex:1; height:4px; background:var(--border); border-radius:99px; overflow:hidden;">
+            <div style="width:${pct}%; height:100%; background:${g === grade ? color : 'var(--border)'}; transition:width .6s;"></div>
+          </div>
+          <span style="font-size:11px; ${active}">${pct}%</span>
+        </div>`;
+      }).join('');
+
+      // 브랜드/모델 인식 결과도 같이 표시
+      const pred = detectData?.prediction;
+      const brandEl2 = document.getElementById('pcBrand');
+      const modelEl2 = document.getElementById('pcModel');
+      const userHasBrand = !!brandEl2.value;
+
+      // 사용자가 이미 브랜드를 선택했으면 AI 인식결과를 덮어씌우지 않고 표시도 생략
+      let detectedInfo = '';
+      if (!userHasBrand && pred?.brand) {
+        detectedInfo = `<div style="margin-bottom:10px; padding:8px 12px; background:var(--surface); border-radius:8px; font-size:12px;">
+            🤖 인식 결과: <strong style="color:var(--mint);">${pred.brand}${pred.model_name ? ' ' + pred.model_name : ''}</strong>
+            ${pred.model_name ? '' : ' <span style="color:var(--text-muted);">— 모델명을 직접 입력해주세요</span>'}
+          </div>`;
+      }
+
+      resultEl.innerHTML = `
+        ${detectedInfo}
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="font-size:15px; font-weight:700; color:${color};">${grade}등급 — ${label}</span>
+          ${mode === 'mock' ? '<span style="font-size:10px; color:var(--text-muted);">Mock</span>' : ''}
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">${desc}</div>
+        ${bars}
+      `;
+    }
+  }
 
   // ── 상태 ────────────────────────────────────────────────────
   let state = {
