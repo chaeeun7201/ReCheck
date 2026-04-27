@@ -981,6 +981,13 @@
               <ul class="top3-list" id="top3List"></ul>
             </div>
 
+            <!-- 정품 진위 분석 -->
+            <div id="authenticitySection" class="hidden" style="margin-top:20px;">
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:.6px;">정품 진위 분석</div>
+              <div id="authenticityGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;"></div>
+              <div id="authenticityVerdict" style="padding:12px 16px; border-radius:10px; text-align:center; font-size:13px; font-weight:700;"></div>
+            </div>
+
             <!-- 액션 버튼 -->
             <div class="action-row mt-6">
               <button class="btn btn-primary" id="btnConfirm">✅ 맞아요, 저장</button>
@@ -1226,9 +1233,41 @@
           </div>
 
           <!-- 데이터 출처 -->
-          <div style="margin-top:12px; font-size:11px; color:var(--text-muted); text-align:right;" id="pcSource">—</div>
+          <div style="margin-top:12px; font-size:11px; color:var(--text-muted); text-align:right;" id="pcSource">&#8212;</div>
 
           <button class="btn btn-ghost" style="margin-top:20px; width:100%;" onclick="resetPriceCheck()">↩ 다시 분석하기</button>
+        </div>
+      </div>
+      <!-- ── 판매자 문자/글 텍스트 분석 ── -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title">📝 판매자 화법 분석</div>
+        <div class="card-sub">판매자가 보낸 메시지를 붙여넣으면 사기 위험 문구를 자동으로 탐지합니다.</div>
+
+        <div id="txtInputArea">
+          <textarea id="txtInput" placeholder="판매자 메시지를 여기에 붙여넣으세요..." rows="6"
+            style="width:100%; box-sizing:border-box; padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text-main); font-size:14px; resize:vertical; font-family:inherit; line-height:1.6;"></textarea>
+          <button type="button" class="btn btn-primary" style="width:100%; margin-top:10px; padding:14px;"
+            onclick="analyzeText()">분석하기</button>
+        </div>
+
+        <div id="txtResult" class="hidden" style="margin-top:20px;">
+          <!-- 위험도 -->
+          <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+            <div id="txtRiskCircle" style="width:72px; height:72px; border-radius:50%; border:4px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; color:var(--text-main);">0</div>
+            <div>
+              <div id="txtRiskLabel" style="font-size:18px; font-weight:700; margin-bottom:4px;">—</div>
+              <div id="txtRiskDesc" style="font-size:13px; color:var(--text-muted);"></div>
+            </div>
+          </div>
+
+          <!-- 탐지 항목 목록 -->
+          <div id="txtCategories" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;"></div>
+
+          <!-- 하이라이팅된 원문 -->
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">📄 원문 (위험 문구 강조)</div>
+          <div id="txtHighlight" style="padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; font-size:14px; line-height:1.8; white-space:pre-wrap; word-break:break-all;"></div>
+
+          <button type="button" class="btn btn-ghost" style="width:100%; margin-top:16px;" onclick="resetTextAnalysis()">↩ 다시 분석하기</button>
         </div>
       </div>
     </div>
@@ -1238,6 +1277,113 @@
 
 <script>
   const API = 'http://localhost:8000'; // 백엔드 주소 (배포 시 교체)
+
+  // ── 판매자 화법 분석 ────────────────────────────────────────
+  const TEXT_PATTERNS = [
+    { category: '계좌이체 유도', weight: 35, color: '#ff4d6a', icon: '💸',
+      patterns: ['계좌번호', '계좌 알려', '계좌로', '입금', '무통장', '통장번호', '계좌이체', '현금으로만', '현금만'] },
+    { category: '외부거래 유도', weight: 35, color: '#ff4d6a', icon: '🚫',
+      patterns: ['카카오톡으로', '카톡으로', '문자로 연락', '전화로 연락', '앱 말고', '번개 말고', '당근 말고', '앱 밖에서', '직접 연락', '개인적으로'] },
+    { category: '개인정보 요구', weight: 30, color: '#ff4d6a', icon: '🔐',
+      patterns: ['주소 알려', '주소 보내', '전화번호 알려', '신분증', '개인정보', '이름 알려', '연락처 알려'] },
+    { category: '외부 결제 유도', weight: 30, color: '#ff6b35', icon: '💳',
+      patterns: ['토스로', '카카오페이로', '페이팔', '해외송금', '가상계좌', '코인으로', '상품권으로', '문화상품권', '구글페이'] },
+    { category: '급박함/압박', weight: 15, color: '#ffd166', icon: '⏰',
+      patterns: ['지금 바로', '오늘만', '빨리', '급하게', '마지막 기회', '한 명만', '선착순', '오늘까지', '내일이면', '곧 올려요'] },
+    { category: '과도한 할인', weight: 10, color: '#ffd166', icon: '📉',
+      patterns: ['급처', '떨이', '파격 할인', '원가 이하', '손해 보고', '급매', '헐값'] },
+    { category: '정품 과잉 주장', weight: 10, color: '#ffd166', icon: '🏷️',
+      patterns: ['100% 정품', '절대 가품', '진품 보장', '정품만 팝니다', '가품 아님', '무조건 정품'] },
+  ];
+
+  function analyzeText() {
+    const text = document.getElementById('txtInput').value.trim();
+    if (!text) return;
+
+    const matched = [];
+    let totalScore = 0;
+
+    for (const group of TEXT_PATTERNS) {
+      const hits = group.patterns.filter(p => text.includes(p));
+      if (hits.length > 0) {
+        matched.push({ ...group, hits });
+        totalScore = Math.min(100, totalScore + group.weight * Math.min(hits.length, 2));
+      }
+    }
+
+    // 위험도 원 색상
+    const score = Math.round(totalScore);
+    const circle = document.getElementById('txtRiskCircle');
+    const label = document.getElementById('txtRiskLabel');
+    const desc = document.getElementById('txtRiskDesc');
+    circle.textContent = score;
+
+    if (score >= 60) {
+      circle.style.borderColor = '#ff4d6a'; circle.style.color = '#ff4d6a';
+      label.textContent = '높은 위험'; label.style.color = '#ff4d6a';
+      desc.textContent = '여러 사기 패턴이 감지되었습니다. 거래를 중단하고 신고를 검토하세요.';
+    } else if (score >= 30) {
+      circle.style.borderColor = '#ffd166'; circle.style.color = '#ffd166';
+      label.textContent = '주의 필요'; label.style.color = '#ffd166';
+      desc.textContent = '일부 의심 문구가 발견되었습니다. 플랫폼 내 안전결제를 이용하세요.';
+    } else if (score > 0) {
+      circle.style.borderColor = '#a8e6cf'; circle.style.color = '#a8e6cf';
+      label.textContent = '낮은 위험'; label.style.color = '#a8e6cf';
+      desc.textContent = '경미한 주의 문구가 있으나 큰 위험은 없어 보입니다.';
+    } else {
+      circle.style.borderColor = 'var(--mint)'; circle.style.color = 'var(--mint)';
+      label.textContent = '위험 없음'; label.style.color = 'var(--mint)';
+      desc.textContent = '특이한 위험 문구가 감지되지 않았습니다.';
+    }
+
+    // 탐지 항목 렌더링
+    const catEl = document.getElementById('txtCategories');
+    catEl.innerHTML = matched.length === 0
+      ? `<div style="padding:12px 16px; background:rgba(0,200,150,.08); border:1px solid rgba(0,200,150,.2); border-radius:10px; font-size:13px; color:var(--mint);">✅ 위험 문구가 탐지되지 않았습니다.</div>`
+      : matched.map(g => `
+        <div style="padding:12px 16px; background:rgba(255,77,106,.06); border:1px solid ${g.color}44; border-radius:10px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+            <span>${g.icon}</span>
+            <span style="font-weight:700; font-size:13px; color:${g.color};">${g.category}</span>
+            <span style="margin-left:auto; font-size:11px; color:var(--text-muted);">위험도 +${g.weight}</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted);">탐지 문구: ${g.hits.map(h => `<mark style="background:${g.color}33; color:${g.color}; border-radius:3px; padding:1px 5px;">${h}</mark>`).join(', ')}</div>
+        </div>`).join('');
+
+    // 원문 하이라이팅
+    let highlighted = text;
+    const allMatches = [];
+    for (const g of TEXT_PATTERNS) {
+      for (const p of g.patterns) {
+        let idx = 0;
+        while ((idx = highlighted.indexOf(p, idx)) !== -1) {
+          allMatches.push({ start: idx, end: idx + p.length, color: g.color, text: p });
+          idx += p.length;
+        }
+      }
+    }
+    // 뒤에서부터 치환해야 인덱스 안 밀림
+    allMatches.sort((a, b) => b.start - a.start);
+    const seen = new Set();
+    for (const m of allMatches) {
+      const key = `${m.start}-${m.end}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const before = highlighted.slice(0, m.start);
+      const after = highlighted.slice(m.end);
+      highlighted = before + `<mark style="background:${m.color}44; color:${m.color}; border-radius:3px; padding:1px 4px;">${m.text}</mark>` + after;
+    }
+    document.getElementById('txtHighlight').innerHTML = highlighted;
+
+    document.getElementById('txtInputArea').classList.add('hidden');
+    document.getElementById('txtResult').classList.remove('hidden');
+  }
+
+  function resetTextAnalysis() {
+    document.getElementById('txtInput').value = '';
+    document.getElementById('txtResult').classList.add('hidden');
+    document.getElementById('txtInputArea').classList.remove('hidden');
+  }
 
   // ── 탭 전환 ─────────────────────────────────────────────────
   function switchTab(tab) {
@@ -1303,6 +1449,9 @@
   }
 
   function renderPriceCheck(d) {
+    const pcResult = document.getElementById('pcResult');
+    pcResult.classList.remove('hidden');
+
     const { level, signal, guide, market_price, fair_min, fair_max, asking_price,
             optimal_sell, optimal_buy, sell_gain, buy_save, data_source } = d;
 
@@ -1313,34 +1462,36 @@
 
     const LABEL = { safe: '적정가', caution: '주의', danger: '위험' };
     const labelEl = document.getElementById('pcRiskLabel');
-    labelEl.textContent = LABEL[level];
+    labelEl.textContent = LABEL[level] ?? level;
     labelEl.className = `risk-label ${level}`;
-    document.getElementById('pcSignal').textContent = signal;
+    document.getElementById('pcSignal').textContent = signal ?? '';
 
     // 가격 카드
-    document.getElementById('pcMarketPrice').textContent = `₩${Math.round(market_price/10000).toLocaleString()}만`;
-    document.getElementById('pcFairRange').textContent =
-      `₩${Math.round(fair_min/10000).toLocaleString()}만 ~ ₩${Math.round(fair_max/10000).toLocaleString()}만`;
+    document.getElementById('pcMarketPrice').textContent = market_price != null
+      ? `₩${Math.round(market_price/10000).toLocaleString()}만` : '—';
+    document.getElementById('pcFairRange').textContent = (fair_min != null && fair_max != null)
+      ? `₩${Math.round(fair_min/10000).toLocaleString()}만 ~ ₩${Math.round(fair_max/10000).toLocaleString()}만` : '—';
 
     const askEl = document.getElementById('pcAskingPrice');
-    askEl.textContent = `₩${Math.round(asking_price/10000).toLocaleString()}만`;
+    askEl.textContent = asking_price != null ? `₩${Math.round(asking_price/10000).toLocaleString()}만` : '—';
     askEl.className = 'tc-value ' + (level === 'safe' ? 'ok' : level === 'danger' ? 'no' : '');
 
     // 가이드
-    document.getElementById('pcGuide').textContent = guide;
+    document.getElementById('pcGuide').textContent = guide ?? '';
 
     // 최적 타이밍
-    document.getElementById('pcSellMonth').textContent = `${optimal_sell.month} 매도 추천`;
-    document.getElementById('pcSellGain').textContent = sell_gain >= 0
-      ? `지금보다 ${sell_gain}% 높은 가격 예상`
-      : `현재가 고점에 가까움`;
-    document.getElementById('pcBuyMonth').textContent = `${optimal_buy.month} 구매 추천`;
-    document.getElementById('pcBuySave').textContent = buy_save > 0
-      ? `지금보다 ${buy_save}% 저렴하게 살 수 있음`
-      : `지금이 최적 구매 시점`;
+    document.getElementById('pcSellMonth').textContent = optimal_sell?.month
+      ? `${optimal_sell.month} 매도 추천` : '—';
+    document.getElementById('pcSellGain').textContent = sell_gain != null
+      ? (sell_gain >= 0 ? `지금보다 ${sell_gain}% 높은 가격 예상` : `현재가 고점에 가까움`)
+      : '—';
+    document.getElementById('pcBuyMonth').textContent = optimal_buy?.month
+      ? `${optimal_buy.month} 구매 추천` : '—';
+    document.getElementById('pcBuySave').textContent = buy_save != null
+      ? (buy_save > 0 ? `지금보다 ${buy_save}% 저렴하게 살 수 있음` : `지금이 최적 구매 시점`)
+      : '—';
 
-    document.getElementById('pcSource').textContent = `시세 출처: ${data_source}`;
-    document.getElementById('pcResult').classList.remove('hidden');
+    document.getElementById('pcSource').textContent = data_source ? `시세 출처: ${data_source}` : '';
   }
 
   function resetPriceCheck() {
@@ -1521,22 +1672,25 @@
 
     goStep('2L');
 
-    // ── API 호출 or Mock ──────────────────────────────────────
-    const formData = new FormData();
-    formData.append('file', file);
+    // ── API 호출 (detect + verify-authenticity 병렬) ─────────
+    const fd1 = new FormData(); fd1.append('file', file);
+    const fd2 = new FormData(); fd2.append('file', file);
 
-    let result;
+    let result, authResult;
     try {
-      const resp = await fetch(`${API}/api/detect`, { method: 'POST', body: formData });
-      if (!resp.ok) throw new Error(await resp.text());
-      result = await resp.json();
+      [result, authResult] = await Promise.all([
+        fetch(`${API}/api/detect`,              { method: 'POST', body: fd1 }).then(r => r.ok ? r.json() : Promise.reject(r)),
+        fetch(`${API}/api/verify-authenticity`, { method: 'POST', body: fd2 }).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]);
     } catch (err) {
       console.warn('API 호출 실패, 클라이언트 Mock 사용:', err.message);
       result = clientMock();
+      authResult = null;
     }
 
     state.detectResult = result;
     showResult(file, result);
+    if (authResult) renderAuthenticity(authResult);
   }
 
   // ── 클라이언트 Mock (API 없을 때) ───────────────────────────
@@ -1569,6 +1723,40 @@
         ? `AI가 '${brand} ${models[brand]}'으로 추측했습니다. (신뢰도 ${Math.round(conf*100)}%)`
         : `브랜드 '${brand}'는 확인했지만 모델명이 확실하지 않습니다. 직접 입력해 주세요.`
     };
+  }
+
+  // ── 정품 진위 분석 렌더링 ────────────────────────────────────
+  function renderAuthenticity(data) {
+    const section = $('authenticitySection');
+    const grid    = $('authenticityGrid');
+    const verdict = $('authenticityVerdict');
+    if (!section) return;
+
+    const COLOR = { pass: 'var(--mint)', fail: '#ff4d6a' };
+    grid.innerHTML = Object.entries(data.checks).map(([, c]) => {
+      const col  = c.passed ? COLOR.pass : COLOR.fail;
+      const tag  = c.passed ? 'Pass' : 'Fail';
+      const pct  = c.score;
+      return `<div style="background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">${c.label}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:15px; font-weight:700; color:${col};">${pct}%</span>
+          <span style="font-size:11px; font-weight:700; color:${col}; background:${col}22; padding:2px 8px; border-radius:99px;">${tag}</span>
+        </div>
+        <div style="height:4px; background:var(--border); border-radius:99px; overflow:hidden;">
+          <div style="width:${pct}%; height:100%; background:${col}; transition:width .6s;"></div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const VCOL = { safe: 'var(--mint)', caution: '#ffd166', danger: '#ff4d6a' };
+    const VBG  = { safe: 'rgba(77,255,195,.08)', caution: 'rgba(255,209,102,.08)', danger: 'rgba(255,77,106,.08)' };
+    const VICON = { safe: '✅', caution: '⚠️', danger: '🚨' };
+    const lv = data.verdict_level;
+    verdict.style.cssText = `background:${VBG[lv]}; border:1px solid ${VCOL[lv]}44; color:${VCOL[lv]};`;
+    verdict.textContent = `${VICON[lv]} ${data.verdict}  (${data.pass_count}/4 항목 통과)`;
+
+    section.classList.remove('hidden');
   }
 
   // ── 결과 렌더링 ──────────────────────────────────────────────
@@ -1710,6 +1898,7 @@
     state = { step:1, imageB64:null, imageMimeType:null, detectResult:null };
     $('fileInput').value = '';
     $('editForm').classList.remove('visible');
+    $('authenticitySection').classList.add('hidden');
     goStep(1);
   });
 
@@ -1717,6 +1906,7 @@
     state = { step:1, imageB64:null, imageMimeType:null, detectResult:null };
     $('fileInput').value = '';
     $('editForm').classList.remove('visible');
+    $('authenticitySection').classList.add('hidden');
     goStep(1);
     fetchStats();
   });

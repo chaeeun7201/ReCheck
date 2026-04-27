@@ -143,6 +143,7 @@ _embeddings              = None   # shape: (N, 512)
 _labels                  = None   # list of {"brand": ..., "model": ...}
 _brand_text_embeddings   = None   # {brand_ko: np.ndarray} CLIP 이미지 프로토타입 캐시
 _brand_zeroshot_cache    = None   # {brand: np.ndarray} CLIP 텍스트 임베딩 캐시 (zero-shot)
+_authenticity_cache      = None   # {check_key: (auth_emb, fake_emb)} 진위 분석 텍스트 임베딩 캐시
 
 # ── 브랜드별 시각적 특징 프롬프트 (Zero-shot CLIP 분류용) ──────────
 _BRAND_VISUAL_PROMPTS: dict[str, list[str]] = {
@@ -516,6 +517,145 @@ async def _get_image_embedding(image: PILImage.Image) -> Optional[np.ndarray]:
         return features[0].cpu().numpy()
 
     return await loop.run_in_executor(None, _infer)
+
+
+# ── 정품 진위 분석 ───────────────────────────────────────────────
+_AUTHENTICITY_PROMPTS = {
+    "logo": {
+        "label": "로고 분석",
+        "authentic": [
+            "a luxury bag with perfectly symmetric crisp precisely positioned brand logo",
+            "high-end handbag showing clear sharp authentic brand markings with perfect proportions",
+            "genuine luxury bag logo with clean edges correct proportions and perfect alignment",
+        ],
+        "fake": [
+            "a counterfeit bag with blurry asymmetric or poorly positioned logo",
+            "a fake luxury bag replica with imprecise distorted incorrect brand markings",
+            "knockoff handbag with wrong logo proportions uneven spacing or smeared print",
+        ],
+    },
+    "texture": {
+        "label": "재질 특성",
+        "authentic": [
+            "premium quality genuine leather with consistent natural grain texture and subtle sheen",
+            "authentic luxury bag material with even surface quality natural luster and fine finish",
+            "real high-end leather with uniform texture depth and soft natural appearance",
+        ],
+        "fake": [
+            "synthetic PU leather with uneven artificial texture plastic-like sheen",
+            "fake leather material with inconsistent surface quality rough edges or peeling",
+            "counterfeit bag made of low quality synthetic fabric with artificial shine",
+        ],
+    },
+    "stitch": {
+        "label": "봉제 패턴",
+        "authentic": [
+            "luxury bag with perfectly uniform tight evenly spaced hand stitching",
+            "high-end handbag showing precise consistent saddle stitching with equal spacing",
+            "authentic luxury bag with immaculate stitching clean thread and no loose ends",
+        ],
+        "fake": [
+            "bag with uneven loose or inconsistent stitching quality and irregular spacing",
+            "counterfeit handbag with poor stitching machine errors and loose visible threads",
+            "fake luxury bag with crooked misaligned or skipped stitches",
+        ],
+    },
+    "font": {
+        "label": "폰트 검증",
+        "authentic": [
+            "luxury bag hardware with precise clean engravings perfect font weight and spacing",
+            "high-end bag with accurate crisp brand text serial number markings in correct typeface",
+            "authentic luxury hardware showing perfectly formed letters and numbers with clean finish",
+        ],
+        "fake": [
+            "bag with imprecise rough or incorrect font style in hardware engravings",
+            "counterfeit bag with blurry wrong font weight or incorrect letter spacing in markings",
+            "fake luxury bag poorly executed text engravings with inconsistent depth",
+        ],
+    },
+}
+
+
+def _mock_authenticity() -> dict:
+    import random
+    rng = random.Random()
+    checks = {}
+    for key, data in _AUTHENTICITY_PROMPTS.items():
+        score = round(rng.uniform(55, 98), 1)
+        checks[key] = {"label": data["label"], "score": score, "passed": score >= 65.0}
+    pass_count = sum(1 for r in checks.values() if r["passed"])
+    fail_count = 4 - pass_count
+    if fail_count == 0:
+        verdict, level = "정품 가능성 높음", "safe"
+    elif fail_count <= 1:
+        verdict, level = "일부 항목 주의", "caution"
+    else:
+        verdict, level = "가품 의심", "danger"
+    return {"checks": checks, "verdict": verdict, "verdict_level": level,
+            "pass_count": pass_count, "fail_count": fail_count, "mode": "mock"}
+
+
+async def verify_authenticity(image_bytes: bytes) -> dict:
+    """CLIP 기반 정품 진위 분석 — 로고·재질·봉제·폰트 4개 항목 평가"""
+    global _authenticity_cache
+
+    ok = await _load_clip()
+    if not ok:
+        return _mock_authenticity()
+
+    image = PILImage.open(io.BytesIO(image_bytes)).convert("RGB")
+    query_emb = await _get_image_embedding(image)
+    if query_emb is None:
+        return _mock_authenticity()
+
+    # 텍스트 임베딩 최초 1회 계산 후 캐시
+    if _authenticity_cache is None:
+        cache = {}
+        for key, data in _AUTHENTICITY_PROMPTS.items():
+            auth_embs, fake_embs = [], []
+            for p in data["authentic"]:
+                e = await _get_text_embedding(p)
+                if e is not None:
+                    auth_embs.append(e)
+            for p in data["fake"]:
+                e = await _get_text_embedding(p)
+                if e is not None:
+                    fake_embs.append(e)
+            if auth_embs and fake_embs:
+                auth_avg = np.mean(auth_embs, axis=0)
+                fake_avg = np.mean(fake_embs, axis=0)
+                auth_avg /= np.linalg.norm(auth_avg)
+                fake_avg /= np.linalg.norm(fake_avg)
+                cache[key] = (auth_avg, fake_avg)
+        _authenticity_cache = cache
+        print(f"[ReCheck] 진위 분석 텍스트 임베딩 캐시 완료: {len(cache)}개 항목")
+
+    checks = {}
+    for key, data in _AUTHENTICITY_PROMPTS.items():
+        if key not in _authenticity_cache:
+            checks[key] = {"label": data["label"], "score": 50.0, "passed": False}
+            continue
+        auth_emb, fake_emb = _authenticity_cache[key]
+        auth_score = float(np.dot(query_emb, auth_emb))
+        fake_score = float(np.dot(query_emb, fake_emb))
+        # softmax-style 정규화 → Pass 확률 (%)
+        exp_a, exp_f = np.exp(auth_score * 10), np.exp(fake_score * 10)
+        pass_pct = round(float(exp_a / (exp_a + exp_f)) * 100, 1)
+        passed = pass_pct >= 65.0
+        checks[key] = {"label": data["label"], "score": pass_pct, "passed": passed}
+        print(f"[ReCheck] {data['label']}: auth={auth_score:.4f} fake={fake_score:.4f} → {pass_pct}% ({'Pass' if passed else 'Fail'})")
+
+    pass_count = sum(1 for r in checks.values() if r["passed"])
+    fail_count = 4 - pass_count
+    if fail_count == 0:
+        verdict, level = "정품 가능성 높음", "safe"
+    elif fail_count <= 1:
+        verdict, level = "일부 항목 주의", "caution"
+    else:
+        verdict, level = "가품 의심", "danger"
+
+    return {"checks": checks, "verdict": verdict, "verdict_level": level,
+            "pass_count": pass_count, "fail_count": fail_count, "mode": "real"}
 
 
 # ── 특정 브랜드 내 모델 검색 ─────────────────────────────────────

@@ -9,7 +9,7 @@ import math
 import random
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 
-from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding, assess_condition
+from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding, assess_condition, verify_authenticity
 
 from database import save_training_data, get_db_stats
 from price_history import get_history, get_latest_price, save_prices
@@ -77,7 +77,33 @@ try:
 except ImportError:
     _bunjang_available = False
 
-app = FastAPI(title="ReCheck API", version="1.0.0")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(_):
+    """서버 시작 시 CLIP 모델 + 텍스트 임베딩 캐시 미리 계산 → 첫 분석 속도 개선"""
+    from detector import _load_clip, _classify_brand_zeroshot, verify_authenticity
+    import numpy as np
+
+    print("[ReCheck] 워밍업 시작...")
+    ok = await _load_clip()
+    if ok:
+        dummy_emb = np.zeros(512, dtype=np.float32)
+        dummy_emb[0] = 1.0
+        await _classify_brand_zeroshot(dummy_emb)
+
+        from PIL import Image as PILImage
+        import io
+        img = PILImage.new("RGB", (224, 224), color=(128, 128, 128))
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG")
+        await verify_authenticity(buf.getvalue())
+        print("[ReCheck] 워밍업 완료 — 이제 첫 분석도 빠릅니다")
+    else:
+        print("[ReCheck] CLIP 로드 실패 — 워밍업 스킵")
+    yield
+
+app = FastAPI(title="ReCheck API", version="1.0.0", lifespan=lifespan)
 
 # 스케줄러 시작 (APScheduler 설치 시에만)
 try:
@@ -134,6 +160,16 @@ async def assess_condition_api(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="이미지 파일만 업로드 가능합니다.")
     contents = await file.read()
     result = await assess_condition(contents)
+    return result
+
+
+@app.post("/api/verify-authenticity")
+async def verify_authenticity_api(file: UploadFile = File(...)):
+    """이미지 → 로고·재질·봉제·폰트 4항목 진위 분석"""
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="이미지 파일만 업로드 가능합니다.")
+    contents = await file.read()
+    result = await verify_authenticity(contents)
     return result
 
 
