@@ -1115,6 +1115,37 @@
 
     <!-- ══════════════ 가격 분석 탭 ══════════════ -->
     <div id="fraudSection" class="hidden">
+
+      <!-- ── 판매 링크 자동 분석 ── -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">🔗 판매글 링크로 자동 분석</div>
+        <div class="card-sub">번개장터·당근마켓 상품 링크를 붙여넣으면 가격·설명을 자동으로 가져와서 아래 폼을 채워드립니다.</div>
+
+        <div class="url-input-row" style="margin-top:16px;">
+          <input id="listingUrl" type="url" class="url-input" style="flex:1;"
+            placeholder="https://m.bunjang.co.kr/products/... 또는 https://www.daangn.com/articles/..."
+            onkeydown="if(event.key==='Enter'){fetchListing();event.preventDefault();}" />
+          <button type="button" class="btn btn-primary" style="padding:10px 20px; white-space:nowrap; flex-shrink:0;"
+            onclick="fetchListing()">가져오기</button>
+        </div>
+
+        <div id="listingLoading" class="hidden" style="text-align:center; padding:20px 0;">
+          <div class="spinner" style="margin:0 auto 12px;"></div>
+          <p style="font-size:13px; color:var(--text-muted);">판매글을 불러오는 중...</p>
+        </div>
+
+        <div id="listingPreview" class="hidden" style="margin-top:14px; padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; display:flex; gap:14px; align-items:flex-start;">
+          <img id="listingThumb" src="" alt="" style="width:72px; height:72px; object-fit:cover; border-radius:8px; flex-shrink:0; display:none;" />
+          <div style="flex:1; min-width:0;">
+            <div id="listingTitle" style="font-weight:600; font-size:14px; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+            <div id="listingPricePreview" style="font-size:13px; color:var(--mint); font-weight:700;"></div>
+            <div style="margin-top:8px; font-size:12px; color:var(--mint);">✅ 아래 폼에 자동으로 입력되었습니다.</div>
+          </div>
+        </div>
+
+        <div id="listingError" class="hidden" style="margin-top:12px; padding:12px 16px; background:rgba(255,77,106,.08); border:1px solid rgba(255,77,106,.3); border-radius:10px; font-size:13px; color:#ff7a8a;"></div>
+      </div>
+
       <div class="card">
         <div class="card-title">💰 가격 이상 탐지 · 최적가 가이드</div>
         <div class="card-sub">브랜드, 모델명, 판매가를 입력하면 시세 대비 적정 여부와 최적 거래 타이밍을 알려드립니다.</div>
@@ -1127,8 +1158,8 @@
             <div class="pc-row">
               <div class="pc-field">
                 <label>브랜드</label>
-                <select id="pcBrand">
-                  <option value="">선택하세요</option>
+                <input id="pcBrand" type="text" list="brandSuggestions" placeholder="예: Nike, Chanel, The North Face" autocomplete="off" onkeydown="if(event.key==='Enter')event.preventDefault()" />
+                <datalist id="brandSuggestions">
                   <option>Chanel</option><option>Louis Vuitton</option>
                   <option>Gucci</option><option>Hermes</option>
                   <option>Prada</option><option>Dior</option>
@@ -1136,18 +1167,29 @@
                   <option>Bottega Veneta</option><option>Saint Laurent</option>
                   <option>Celine</option><option>Loewe</option>
                   <option>Burberry</option><option>Tiffany</option><option>Cartier</option>
-                </select>
+                  <option>Nike</option><option>Adidas</option>
+                  <option>New Balance</option><option>Converse</option>
+                  <option>Vans</option><option>Puma</option>
+                  <option>Reebok</option><option>ASICS</option>
+                  <option>Salomon</option><option>On Running</option>
+                  <option>The North Face</option><option>Patagonia</option>
+                  <option>Columbia</option><option>Arc'teryx</option>
+                  <option>Moncler</option><option>Stone Island</option>
+                  <option>Supreme</option><option>BAPE</option>
+                  <option>Stussy</option><option>Off-White</option>
+                  <option>Carhartt</option><option>Uniqlo</option>
+                </datalist>
               </div>
               <div class="pc-field">
                 <label>모델명</label>
-                <input id="pcModel" type="text" placeholder="Classic Flap, Neverfull MM …" onkeydown="if(event.key==='Enter')event.preventDefault()" />
+                <input id="pcModel" type="text" placeholder="예: 클래식 플랩, 에어포스 1, 눕시 재킷 …" onkeydown="if(event.key==='Enter')event.preventDefault()" />
               </div>
             </div>
 
             <!-- 판매가 -->
             <div class="pc-field">
               <label>판매가 (원)</label>
-              <input id="pcPrice" type="number" placeholder="예: 1,500,000" min="0" onkeydown="if(event.key==='Enter')event.preventDefault()" />
+              <input id="pcPrice" type="text" placeholder="예: 45,000원" inputmode="numeric" onkeydown="if(event.key==='Enter')event.preventDefault()" oninput="this.value=this.value.replace(/[^\d]/g,'');if(this.value)this.value=Number(this.value).toLocaleString()+'원'" />
             </div>
 
             <!-- 상태 등급 — AI 사진 평가만 사용 -->
@@ -1159,7 +1201,7 @@
                 <div id="condUploadInner">
                   <div style="font-size:28px; margin-bottom:8px;">📸</div>
                   <div style="font-size:13px; font-weight:600;">상품 사진 업로드</div>
-                  <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">브랜드·모델명 자동 인식 + S~C 등급 자동 부여</div>
+                  <div id="condUploadHint" style="font-size:12px; color:var(--text-muted); margin-top:4px;">브랜드·모델명 자동 인식 + S~C 등급 자동 부여</div>
                 </div>
               </div>
               <div id="condResult" style="display:none; margin-top:12px; padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; font-size:13px;"></div>
@@ -1277,6 +1319,60 @@
 
 <script>
   const API = 'http://localhost:8000'; // 백엔드 주소 (배포 시 교체)
+
+  let listingLoaded = false; // 링크로 폼을 채운 경우 사진 AI인식 스킵
+
+  // ── 판매글 링크 자동 분석 ────────────────────────────────────
+  async function fetchListing() {
+    const url = document.getElementById('listingUrl').value.trim();
+    if (!url) return alert('링크를 입력해 주세요.');
+    if (!url.startsWith('http')) return alert('올바른 URL을 입력해 주세요.');
+
+    const loading = document.getElementById('listingLoading');
+    const preview = document.getElementById('listingPreview');
+    const errEl   = document.getElementById('listingError');
+    loading.classList.remove('hidden');
+    preview.classList.add('hidden');
+    errEl.classList.add('hidden');
+
+    try {
+      const res = await fetch(`${API}/api/analyze-listing`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || '불러오기 실패');
+
+      // 폼 자동 입력
+      if (data.brand)      document.getElementById('pcBrand').value = data.brand;
+      if (data.model_name) document.getElementById('pcModel').value = data.model_name;
+      if (data.price)      document.getElementById('pcPrice').value = Number(data.price).toLocaleString() + '원';
+      if (data.description) document.getElementById('txtInput').value = data.description;
+      listingLoaded = true;
+      const hint = document.getElementById('condUploadHint');
+      if (hint) hint.textContent = 'S~C 등급 자동 평가 (브랜드·모델명은 링크에서 가져옴)';
+
+      // 프리뷰 표시
+      document.getElementById('listingTitle').textContent = data.title || '(제목 없음)';
+      document.getElementById('listingPricePreview').textContent =
+        data.price ? `${Number(data.price).toLocaleString()}원` : '';
+      const thumb = document.getElementById('listingThumb');
+      if (data.image_url) {
+        thumb.src = data.image_url;
+        thumb.style.display = 'block';
+        thumb.onerror = () => { thumb.style.display = 'none'; };
+      } else {
+        thumb.style.display = 'none';
+      }
+      preview.classList.remove('hidden');
+    } catch (e) {
+      errEl.textContent = e.message;
+      errEl.classList.remove('hidden');
+    } finally {
+      loading.classList.add('hidden');
+    }
+  }
 
   // ── 판매자 화법 분석 ────────────────────────────────────────
   const TEXT_PATTERNS = [
@@ -1401,10 +1497,10 @@
 
     const brand = document.getElementById('pcBrand').value.trim();
     const model = document.getElementById('pcModel').value.trim();
-    const price = parseInt(document.getElementById('pcPrice').value);
+    const price = parseInt(document.getElementById('pcPrice').value.replace(/[^\d]/g, ''));
     const condition = document.getElementById('pcCondition').value;
 
-    if (!brand) return alert('브랜드를 선택해 주세요.');
+    if (!brand) return alert('브랜드를 입력해 주세요.');
     if (!model) return alert('모델명을 입력해 주세요.');
     if (!price || price <= 0) return alert('판매가를 입력해 주세요.');
     if (!condition) return alert('상품 사진을 업로드하면 AI가 상태 등급을 자동으로 평가합니다.');
@@ -1495,6 +1591,10 @@
   }
 
   function resetPriceCheck() {
+    listingLoaded = false;
+    document.getElementById('listingUrl').value = '';
+    document.getElementById('listingPreview').classList.add('hidden');
+    document.getElementById('listingError').classList.add('hidden');
     document.getElementById('pcResult').classList.add('hidden');
     document.getElementById('pcError').classList.add('hidden');
     document.getElementById('priceCheckForm').classList.remove('hidden');
@@ -1526,29 +1626,32 @@
       <div style="font-size:12px; color:var(--text-muted);">분석 중...</div>
     `;
 
-    // FormData를 각 요청마다 별도 생성 (하나로 두 번 쓸 수 없음)
-    const fd1 = new FormData(); fd1.append('file', file);
-    const fd2 = new FormData(); fd2.append('file', file);
+    // 링크로 이미 채운 경우: 상태 평가만, 브랜드/모델 AI인식 생략
+    const fd = new FormData(); fd.append('file', file);
 
-    // 브랜드/모델 인식 + 상태 평가 동시 호출
-    let detectData, cond;
+    let detectData = null, cond;
     try {
-      [detectData, cond] = await Promise.all([
-        fetch(`${API}/api/detect`,           { method: 'POST', body: fd1 }).then(r => r.json()),
-        fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd2 }).then(r => r.json()),
-      ]);
+      if (listingLoaded) {
+        cond = await fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd }).then(r => r.json());
+      } else {
+        const fd2 = new FormData(); fd2.append('file', file);
+        [detectData, cond] = await Promise.all([
+          fetch(`${API}/api/detect`,           { method: 'POST', body: fd  }).then(r => r.json()),
+          fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd2 }).then(r => r.json()),
+        ]);
+      }
     } catch (e) {
       resultEl.innerHTML = '<span style="color:var(--red)">분석 실패 — 백엔드 연결을 확인하세요.</span>';
       document.getElementById('condUploadInner').innerHTML = `
         <div style="font-size:28px; margin-bottom:8px;">📸</div>
         <div style="font-size:13px; font-weight:600;">상품 사진 업로드</div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">브랜드·모델명 자동 인식 + S~C 등급 자동 부여</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${listingLoaded ? 'S~C 등급 자동 평가' : '브랜드·모델명 자동 인식 + S~C 등급 자동 부여'}</div>
       `;
       return;
     }
 
-    // ── 브랜드/모델 자동 채우기 (비어있는 경우만) ──────────────
-    if (detectData?.detected && detectData.prediction) {
+    // ── 브랜드/모델 자동 채우기 (링크 미사용 시에만) ──────────
+    if (!listingLoaded && detectData?.detected && detectData.prediction) {
       const pred = detectData.prediction;
       const brandEl = document.getElementById('pcBrand');
       const modelEl = document.getElementById('pcModel');

@@ -77,6 +77,62 @@ try:
 except ImportError:
     _bunjang_available = False
 
+# 영→한 브랜드 매핑 (KREAM 검색용)
+_BRAND_EN_TO_KO = {
+    "Nike": "나이키", "Adidas": "아디다스", "New Balance": "뉴발란스",
+    "The North Face": "노스페이스", "Converse": "컨버스", "Vans": "반스",
+    "Puma": "퓨마", "Reebok": "리복", "ASICS": "아식스", "Salomon": "살로몬",
+    "On Running": "온러닝", "Patagonia": "파타고니아", "Columbia": "콜롬비아",
+    "Arc'teryx": "아크테릭스", "Moncler": "몽클레어", "Stone Island": "스톤아일랜드",
+    "Supreme": "슈프림", "BAPE": "베이프", "Stussy": "스투시", "Uniqlo": "유니클로",
+    "Carhartt": "카하트", "Chanel": "샤넬", "Louis Vuitton": "루이비통",
+    "Gucci": "구찌", "Hermes": "에르메스", "Prada": "프라다", "Dior": "디올",
+    "Fendi": "펜디", "Balenciaga": "발렌시아가", "Bottega Veneta": "보테가베네타",
+    "Saint Laurent": "생로랑", "Celine": "셀린느", "Loewe": "로에베",
+    "Burberry": "버버리",
+}
+
+async def _fetch_kream_price_live(brand: str, model_name: str) -> tuple[int | None, str]:
+    """KREAM 실시간 시세 조회 — 1순위 가격 소스"""
+    import httpx, re as _re, json as _json
+
+    brand_ko = _BRAND_EN_TO_KO.get(brand, brand)
+    # 모델명에 이미 한글 브랜드가 포함돼 있으면 중복 방지
+    if brand_ko and brand_ko in model_name:
+        query = model_name
+    else:
+        query = f"{brand_ko} {model_name}".strip()
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "Referer": "https://kream.co.kr/",
+    }
+    try:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            resp = await client.get(
+                "https://kream.co.kr/search",
+                params={"keyword": query},
+                headers=headers,
+                timeout=10.0,
+            )
+        m = _re.search(
+            r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>',
+            resp.text, _re.DOTALL,
+        )
+        if not m:
+            return None, "AI 추정"
+        txt = _json.dumps(_json.loads(m.group(1)), ensure_ascii=False)
+        prices_raw = _re.findall(
+            r'"(?:price|lowestPrice|recentPrice|tradePrice)"\s*:\s*(\d+)', txt
+        )
+        vals = [int(p) for p in prices_raw if 1_000 <= int(p) <= 100_000_000]
+        if vals:
+            return sorted(vals)[len(vals) // 2], "KREAM 실시간"
+    except Exception as e:
+        print(f"[KREAM] 시세 조회 실패 ({query}): {e}")
+    return None, "AI 추정"
+
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -221,16 +277,20 @@ async def price_chart(brand: str = Query(...), model_name: str = Query(...)):
         suffix = "(E)" if pred else ""
         return KR_MONTHS[dt.month - 1] + "\uc6d4" + suffix
 
-    # ── 1) 번개장터 실시간 시세 조회 ─────────────────────────────
-    live_price, data_source = await _fetch_bunjang_price(brand, model_name)
+    # ── 1) KREAM 실시간 시세 (1순위) ─────────────────────────────
+    live_price, data_source = await _fetch_kream_price_live(brand, model_name)
 
-    # ── 2) fallback: DB 최신가 ────────────────────────────────────
+    # ── 2) 번개장터 실시간 (2순위) ────────────────────────────────
+    if not live_price:
+        live_price, data_source = await _fetch_bunjang_price(brand, model_name)
+
+    # ── 3) DB 최신가 (3순위) ─────────────────────────────────────
     if not live_price:
         live_price = await get_latest_price(brand, model_name)
         if live_price:
             data_source = "번개장터 DB"
 
-    # ── 3) 현재가 결정: 번개장터 실시간 > DB최신 > fallback ──────
+    # ── 4) 현재가 결정: KREAM > 번개장터 > DB > fallback ─────────
     BASE = {
         "Chanel": 8500000, "Louis Vuitton": 2200000, "Gucci": 1600000,
         "Hermes": 32000000, "Hermès": 32000000,
@@ -254,7 +314,7 @@ async def price_chart(brand: str = Query(...), model_name: str = Query(...)):
         live_price = int(base * (0.92 + rng.random() * 0.16))
         data_source = "AI 추정"
 
-    # ── 4) 월별 계절성 지수 ───────────────────────────────────────
+    # ── 5) 월별 계절성 지수 ───────────────────────────────────────
     SEASON = {1:0.97, 2:0.96, 3:0.98, 4:1.00, 5:1.01, 6:0.99,
               7:0.98, 8:0.99, 9:1.02, 10:1.04, 11:1.03, 12:1.02}
 
@@ -277,7 +337,7 @@ async def price_chart(brand: str = Query(...), model_name: str = Query(...)):
                 noise = (rng.random() - 0.48) * 0.03
                 p = live_price * (1 - 0.02 * i) * (1 + noise) * (SEASON[dt.month] / SEASON[today.month])
                 history.append({"month": label, "price": max(int(p), 100000)})
-        data_source = "번개장터+Kream 실거래" if live_price and data_source == "Kream 실시간" else data_source
+        data_source = "Kream+실거래" if data_source == "Kream 실시간" else data_source
     else:
         # 실데이터 부족 → 시뮬레이션
         history = []
@@ -363,9 +423,14 @@ async def price_check(payload: PriceCheckPayload):
     asking = payload.asking_price
     condition = payload.condition.upper()
 
-    # ── 1) 번개장터 실시간 시세 조회 ─────────────────────────────
-    live_price, data_source = await _fetch_bunjang_price(brand, model_name)
+    # ── 1) KREAM 실시간 시세 (1순위) ────────────────────────────────
+    live_price, data_source = await _fetch_kream_price_live(brand, model_name)
 
+    # ── 2) 번개장터 실시간 (2순위) ───────────────────────────────────
+    if not live_price:
+        live_price, data_source = await _fetch_bunjang_price(brand, model_name)
+
+    # ── 3) DB 저장값 (3순위) ────────────────────────────────────────
     if not live_price:
         live_price = await get_latest_price(brand, model_name)
         if live_price:
@@ -488,6 +553,207 @@ async def price_check(payload: PriceCheckPayload):
         "buy_save": buy_save,
         "prediction": prediction,
     }
+
+
+# ── 판매 링크 분석 ────────────────────────────────────────────────
+class ListingPayload(BaseModel):
+    url: str
+
+_BRAND_KO_EN = {
+    "나이키": "Nike", "아디다스": "Adidas", "뉴발란스": "New Balance",
+    "노스페이스": "The North Face", "컨버스": "Converse", "반스": "Vans",
+    "퓨마": "Puma", "리복": "Reebok", "아식스": "ASICS", "살로몬": "Salomon",
+    "온러닝": "On Running", "파타고니아": "Patagonia", "콜롬비아": "Columbia",
+    "아크테릭스": "Arc'teryx", "몽클레어": "Moncler", "몽클렌": "Moncler",
+    "스톤아일랜드": "Stone Island", "슈프림": "Supreme", "베이프": "BAPE",
+    "스투시": "Stussy", "유니클로": "Uniqlo", "카하트": "Carhartt",
+    "샤넬": "Chanel", "루이비통": "Louis Vuitton", "구찌": "Gucci",
+    "에르메스": "Hermes", "프라다": "Prada", "디올": "Dior",
+    "펜디": "Fendi", "발렌시아가": "Balenciaga", "보테가베네타": "Bottega Veneta",
+    "생로랑": "Saint Laurent", "셀린느": "Celine", "로에베": "Loewe",
+    "버버리": "Burberry",
+}
+_SALE_PHRASES = [
+    "팝니다", "팔아요", "판매합니다", "판매해요", "판매중", "판매 중",
+    "처분합니다", "처분해요", "처분중", "처분 중", "급처", "급매",
+    "나눔합니다", "나눔해요", "삽니다", "구합니다", "구매합니다",
+    "삼니다", "교환합니다", "교환해요",
+]
+
+def _clean_title(title: str) -> str:
+    import re
+    # "상품명 | 사이트명" 패턴 제거
+    title = title.split(" | ")[0]
+    for phrase in _SALE_PHRASES:
+        title = title.replace(phrase, "")
+    return re.sub(r"\s+", " ", title).strip(" -|/[]()【】")
+
+def _infer_brand_model_from_text(text: str, explicit_brand: str = "") -> tuple[str, str]:
+    """제목에서 영문 브랜드 + 정제된 모델명 추출"""
+    model_name = _clean_title(text)
+
+    # API에서 브랜드가 직접 제공된 경우
+    if explicit_brand:
+        brand_en = _BRAND_KO_EN.get(explicit_brand, explicit_brand)
+        return brand_en, model_name
+
+    text_lower = text.lower()
+    # 한국어 브랜드명 매핑
+    for ko, en in _BRAND_KO_EN.items():
+        if ko in text_lower:
+            return en, model_name
+
+    # 영문 브랜드명 직접 매칭
+    try:
+        from bunjang import BRAND_MAP
+        for brand_en, keywords in BRAND_MAP.items():
+            for kw in keywords:
+                if kw.lower() in text_lower:
+                    return brand_en, model_name
+    except ImportError:
+        pass
+
+    return "", model_name
+
+@app.post("/api/analyze-listing")
+async def analyze_listing(payload: ListingPayload):
+    """번개장터·당근마켓 판매 링크 → 상품 정보 추출"""
+    import re, html as html_lib, httpx, json as json_lib
+
+    url = payload.url.strip()
+    HEADERS = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+
+    def parse_og(html_text: str, prop: str) -> str:
+        escaped = re.escape(prop)
+        for pat in [
+            r'<meta\b[^>]+property=["\']' + escaped + r'["\'][^>]+content=["\']([^"\']*)["\']',
+            r'<meta\b[^>]+content=["\']([^"\']*)["\'][^>]+property=["\']' + escaped + r'["\']',
+        ]:
+            hit = re.search(pat, html_text, re.IGNORECASE | re.DOTALL)
+            if hit:
+                return html_lib.unescape(hit.group(1))
+        return ""
+
+    def extract_price(html_text: str, parse_og_fn) -> int:
+        # 1) OG price 태그
+        for prop in ["product:price:amount", "og:price:amount"]:
+            raw = parse_og_fn(prop)
+            if raw:
+                digits = re.sub(r"[^\d]", "", raw)
+                return int(digits) if digits else 0
+        # 2) __NEXT_DATA__ JSON에서 price 필드
+        m = re.search(r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>', html_text, re.DOTALL)
+        if m:
+            try:
+                nd = json_lib.loads(m.group(1))
+                nd_str = json_lib.dumps(nd)
+                hit = re.search(r'"price"\s*:\s*(\d+)', nd_str)
+                if hit:
+                    candidate = int(hit.group(1))
+                    if 1000 <= candidate <= 100_000_000:
+                        return candidate
+            except Exception:
+                pass
+        # 3) 페이지 내 "price": 숫자 패턴
+        hit = re.search(r'"price"\s*:\s*(\d{4,9})', html_text)
+        if hit:
+            candidate = int(hit.group(1))
+            if 1000 <= candidate <= 100_000_000:
+                return candidate
+        # 4) 한국 원화 텍스트 패턴 (예: 100,000원)
+        hit = re.search(r'([\d,]{4,})\s*원', html_text)
+        if hit:
+            candidate = int(hit.group(1).replace(",", ""))
+            if 1000 <= candidate <= 100_000_000:
+                return candidate
+        return 0
+
+    # ── 번개장터 ────────────────────────────────────────────────────
+    if "bunjang.co.kr" in url:
+        m = re.search(r'/products/(\d+)', url)
+        if not m:
+            raise HTTPException(status_code=400, detail="번개장터 상품 링크를 확인해 주세요. (/products/숫자 형식)")
+        pid = m.group(1)
+
+        title = description = image_url = explicit_brand = ""
+        price = 0
+
+        # Googlebot UA로 데스크톱 URL 요청 → SSR 활성화
+        GOOGLEBOT_UA = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+        try:
+            async with httpx.AsyncClient(follow_redirects=True) as client:
+                r = await client.get(
+                    f"https://www.bunjang.co.kr/products/{pid}",
+                    headers={**HEADERS, "User-Agent": GOOGLEBOT_UA},
+                    timeout=15.0,
+                )
+            html_text = r.text
+        except Exception as e:
+            html_text = ""
+
+        if not title and html_text:
+            og_title = parse_og(html_text, "og:title")
+            if og_title:
+                # "상품명 | 브랜드 중고거래 플랫폼, 번개장터" → "상품명"
+                title = og_title.split(" | ")[0].strip()
+                if title == "번개장터":
+                    title = ""
+            if title:
+                description = parse_og(html_text, "og:description")
+                image_url = parse_og(html_text, "og:image") or None
+                price = extract_price(html_text, lambda p: parse_og(html_text, p))
+
+        # 모든 전략 실패 시 — pid만이라도 반환해서 사용자가 수동 입력 가능하도록
+        if not title:
+            raise HTTPException(
+                status_code=404,
+                detail="상품 정보를 가져올 수 없습니다. 판매 종료, 삭제, 또는 비공개 상품일 수 있습니다."
+            )
+
+        brand, model_name = _infer_brand_model_from_text(title, explicit_brand)
+        return {"platform": "bunjang", "title": title, "price": price,
+                "description": description, "image_url": image_url or None,
+                "brand": brand, "model_name": model_name}
+
+    # ── 당근마켓 ────────────────────────────────────────────────────
+    elif "daangn.com" in url:
+        try:
+            async with httpx.AsyncClient(follow_redirects=True) as client:
+                resp = await client.get(url, headers=HEADERS, timeout=15.0)
+                html_text = resp.text
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"당근마켓 응답 오류: {e}")
+
+        def og(prop):
+            return parse_og(html_text, prop)
+
+        title = og("og:title")
+        if not title:
+            raise HTTPException(status_code=422, detail="당근마켓 상품 정보를 가져올 수 없습니다. 링크를 확인해 주세요.")
+
+        description = og("og:description")
+        image_url = og("og:image") or None
+
+        price = extract_price(html_text, og)
+
+        brand, model_name = _infer_brand_model_from_text(title + " " + description)
+        return {"platform": "daangn", "title": title, "price": price,
+                "description": description, "image_url": image_url,
+                "brand": brand, "model_name": model_name}
+
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="지원하지 않는 플랫폼입니다. 번개장터(bunjang.co.kr) 또는 당근마켓(daangn.com) 링크를 입력해 주세요."
+        )
 
 
 # ── URL 사기 탐지 ────────────────────────────────────────────────
