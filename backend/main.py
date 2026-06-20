@@ -7,6 +7,11 @@ import sys
 import hashlib
 import math
 import random
+
+# Windows 콘솔(cp949)이 이모지/특수문자(em-dash 등) 출력 시 죽는 것 방지
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 
 from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding, assess_condition, verify_authenticity

@@ -519,6 +519,20 @@ async def _get_image_embedding(image: PILImage.Image) -> Optional[np.ndarray]:
     return await loop.run_in_executor(None, _infer)
 
 
+# ── 임베딩 DB 기반 브랜드 분류 (이미지 프로토타입, 사용자 보정 반영) ──
+def _classify_brand_from_prototypes(query_emb: np.ndarray) -> Optional[tuple[str, float]]:
+    """
+    _brand_text_embeddings(임베딩 DB 평균 이미지 프로토타입)와 비교해 최상위 브랜드 반환.
+    add_embedding()으로 추가된 사용자 보정 데이터도 즉시 반영되므로,
+    zero-shot 텍스트 분류보다 우선 사용해야 학습(보정)이 다음 인식에 실제로 적용된다.
+    """
+    if not _brand_text_embeddings:
+        return None
+    scores = {brand: float(np.dot(query_emb, emb)) for brand, emb in _brand_text_embeddings.items()}
+    best_brand, best_score = max(scores.items(), key=lambda x: x[1])
+    return best_brand, best_score
+
+
 # ── 정품 진위 분석 ───────────────────────────────────────────────
 _AUTHENTICITY_PROMPTS = {
     "logo": {
@@ -641,7 +655,9 @@ async def verify_authenticity(image_bytes: bytes) -> dict:
         # softmax-style 정규화 → Pass 확률 (%)
         exp_a, exp_f = np.exp(auth_score * 10), np.exp(fake_score * 10)
         pass_pct = round(float(exp_a / (exp_a + exp_f)) * 100, 1)
-        passed = pass_pct >= 65.0
+        # auth/fake 텍스트 임베딩과의 유사도 차가 실제로는 1%p 내외로 작아서,
+        # 65% 기준은 진품 사진도 거의 항상 Fail로 만듦. 50%(=fake보다 authentic에 더 가까움)로 완화.
+        passed = pass_pct >= 50.0
         checks[key] = {"label": data["label"], "score": pass_pct, "passed": passed}
         print(f"[ReCheck] {data['label']}: auth={auth_score:.4f} fake={fake_score:.4f} → {pass_pct}% ({'Pass' if passed else 'Fail'})")
 
@@ -834,18 +850,24 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
                 "message": f"AI가 '{hit_brand} {hit_model}'으로 추측했습니다. (신뢰도 {int(confidence * 100)}%)"
             }
 
-    # ── 브랜드 분류: Zero-shot CLIP (이미지 vs 텍스트 설명) ─────────
-    # 임베딩 DB 없이도 작동하는 기본 경로
-    brand = await _classify_brand_zeroshot(query_emb)
+    # ── 브랜드 분류 ──────────────────────────────────────────────
+    # ① 임베딩 DB(사용자 보정 데이터 포함) 이미지 프로토타입이 있으면 우선 사용
+    #    → 사용자가 수정한 브랜드/모델이 다음 인식에 실제로 반영됨
+    # ② 프로토타입이 없으면(DB 비어있음) zero-shot 텍스트 분류로 fallback
+    proto_match = _classify_brand_from_prototypes(query_emb)
+    if proto_match:
+        detected_brand_ko, _proto_score = proto_match
+        brand = BRAND_KO_TO_EN.get(detected_brand_ko, detected_brand_ko)
+    else:
+        brand = await _classify_brand_zeroshot(query_emb)
+        detected_brand_ko = next(
+            (ko for ko, en in BRAND_KO_TO_EN.items() if en == brand), brand
+        ) if brand else None
 
     # 임베딩 DB가 있으면 해당 브랜드 내 모델 검색, 없으면 모델명 None
     top3: list[dict] = []
     model_confident = False
-    if brand and _embeddings is not None and len(_embeddings) > 0:
-        # DB에서 브랜드 프로토타입으로 재확인 후 모델 검색
-        detected_brand_ko = next(
-            (ko for ko, en in BRAND_KO_TO_EN.items() if en == brand), brand
-        )
+    if brand and detected_brand_ko and _embeddings is not None and len(_embeddings) > 0:
         top3, model_confident = _search_model_in_brand(query_emb, detected_brand_ko, top_k=3)
         for item in top3:
             item["brand"] = BRAND_KO_TO_EN.get(item["brand"], item["brand"])
