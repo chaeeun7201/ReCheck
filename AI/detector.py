@@ -10,8 +10,10 @@ detector.py (CLIP Few-shot + YOLOv8 bbox + YOLOv8 브랜드 분류 버전)
 """
 
 import asyncio
+import difflib
 import io
 import os
+import re
 import numpy as np
 from pathlib import Path
 from typing import Optional
@@ -353,6 +355,74 @@ async def _load_clip():
     except Exception as e:
         print(f"[ReCheck] CLIP 로드 실패: {e}")
         return False
+
+
+# ── 판매자 화법 사기 탐지 (오타·띄어쓰기 허용 유사도 매칭) ────────
+# 외부 모델 다운로드 없이 동작 — 네트워크가 막힌 환경에서도 즉시 사용 가능.
+FRAUD_CATEGORIES = [
+    {"key": "account_transfer", "weight": 35,
+     "patterns": ['계좌번호', '계좌 알려', '계좌로', '입금', '무통장', '통장번호', '계좌이체', '현금으로만', '현금만']},
+    {"key": "offplatform", "weight": 35,
+     "patterns": ['카카오톡으로', '카톡으로', '문자로 연락', '전화로 연락', '앱 말고', '번개 말고', '당근 말고', '앱 밖에서', '직접 연락', '개인적으로']},
+    {"key": "personal_info", "weight": 30,
+     "patterns": ['주소 알려', '주소 보내', '전화번호 알려', '신분증', '개인정보', '이름 알려', '연락처 알려']},
+    {"key": "offplatform_payment", "weight": 30,
+     "patterns": ['토스로', '카카오페이로', '페이팔', '해외송금', '가상계좌', '코인으로', '상품권으로', '문화상품권', '구글페이']},
+    {"key": "urgency_pressure", "weight": 15,
+     "patterns": ['지금 바로', '오늘만', '빨리', '급하게', '마지막 기회', '한 명만', '선착순', '오늘까지', '내일이면', '곧 올려요']},
+    {"key": "excessive_discount", "weight": 10,
+     "patterns": ['급처', '떨이', '파격 할인', '원가 이하', '손해 보고', '급매', '헐값']},
+    {"key": "authenticity_overclaim", "weight": 10,
+     "patterns": ['100% 정품', '절대 가품', '진품 보장', '정품만 팝니다', '가품 아님', '무조건 정품']},
+]
+FUZZY_MATCH_THRESHOLD = 0.82
+
+
+def _normalize(s: str) -> str:
+    return re.sub(r"\s+", "", s)
+
+
+def _best_match_ratio(norm_text: str, norm_pattern: str) -> float:
+    """norm_text 안에서 norm_pattern과 가장 유사한 구간의 유사도(0~1) — 띄어쓰기/오타 1~2자 허용"""
+    if not norm_pattern:
+        return 0.0
+    if norm_pattern in norm_text:
+        return 1.0
+    n = len(norm_pattern)
+    best = 0.0
+    for window in range(max(n - 2, 1), n + 3):
+        for i in range(0, max(len(norm_text) - window + 1, 0)):
+            chunk = norm_text[i:i + window]
+            ratio = difflib.SequenceMatcher(None, norm_pattern, chunk).ratio()
+            if ratio > best:
+                best = ratio
+    return best
+
+
+def classify_fraud_text(text: str) -> dict:
+    """판매자 메시지 → 사기 패턴 카테고리별 유사도 매칭 (공백 무시 + 오타 허용)"""
+    norm_text = _normalize(text)
+
+    matched = []
+    score = 0.0
+    for cat in FRAUD_CATEGORIES:
+        best_conf = max(_best_match_ratio(norm_text, _normalize(p)) for p in cat["patterns"])
+        if best_conf >= FUZZY_MATCH_THRESHOLD:
+            matched.append({"key": cat["key"], "weight": cat["weight"], "confidence": round(best_conf, 3)})
+            score += cat["weight"] * best_conf
+    matched.sort(key=lambda m: m["confidence"], reverse=True)
+    score = round(min(100, score))
+
+    if score >= 60:
+        level = "danger"
+    elif score >= 30:
+        level = "caution"
+    elif score > 0:
+        level = "low"
+    else:
+        level = "safe"
+
+    return {"level": level, "score": score, "categories": matched}
 
 
 # ── 임베딩 DB 로드 ───────────────────────────────────────────────
