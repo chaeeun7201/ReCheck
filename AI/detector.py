@@ -10,8 +10,10 @@ detector.py (CLIP Few-shot + YOLOv8 bbox + YOLOv8 브랜드 분류 버전)
 """
 
 import asyncio
+import difflib
 import io
 import os
+import re
 import numpy as np
 from pathlib import Path
 from typing import Optional
@@ -355,6 +357,74 @@ async def _load_clip():
         return False
 
 
+# ── 판매자 화법 사기 탐지 (오타·띄어쓰기 허용 유사도 매칭) ────────
+# 외부 모델 다운로드 없이 동작 — 네트워크가 막힌 환경에서도 즉시 사용 가능.
+FRAUD_CATEGORIES = [
+    {"key": "account_transfer", "weight": 35,
+     "patterns": ['계좌번호', '계좌 알려', '계좌로', '입금', '무통장', '통장번호', '계좌이체', '현금으로만', '현금만']},
+    {"key": "offplatform", "weight": 35,
+     "patterns": ['카카오톡으로', '카톡으로', '문자로 연락', '전화로 연락', '앱 말고', '번개 말고', '당근 말고', '앱 밖에서', '직접 연락', '개인적으로']},
+    {"key": "personal_info", "weight": 30,
+     "patterns": ['주소 알려', '주소 보내', '전화번호 알려', '신분증', '개인정보', '이름 알려', '연락처 알려']},
+    {"key": "offplatform_payment", "weight": 30,
+     "patterns": ['토스로', '카카오페이로', '페이팔', '해외송금', '가상계좌', '코인으로', '상품권으로', '문화상품권', '구글페이']},
+    {"key": "urgency_pressure", "weight": 15,
+     "patterns": ['지금 바로', '오늘만', '빨리', '급하게', '마지막 기회', '한 명만', '선착순', '오늘까지', '내일이면', '곧 올려요']},
+    {"key": "excessive_discount", "weight": 10,
+     "patterns": ['급처', '떨이', '파격 할인', '원가 이하', '손해 보고', '급매', '헐값']},
+    {"key": "authenticity_overclaim", "weight": 10,
+     "patterns": ['100% 정품', '절대 가품', '진품 보장', '정품만 팝니다', '가품 아님', '무조건 정품']},
+]
+FUZZY_MATCH_THRESHOLD = 0.82
+
+
+def _normalize(s: str) -> str:
+    return re.sub(r"\s+", "", s)
+
+
+def _best_match_ratio(norm_text: str, norm_pattern: str) -> float:
+    """norm_text 안에서 norm_pattern과 가장 유사한 구간의 유사도(0~1) — 띄어쓰기/오타 1~2자 허용"""
+    if not norm_pattern:
+        return 0.0
+    if norm_pattern in norm_text:
+        return 1.0
+    n = len(norm_pattern)
+    best = 0.0
+    for window in range(max(n - 2, 1), n + 3):
+        for i in range(0, max(len(norm_text) - window + 1, 0)):
+            chunk = norm_text[i:i + window]
+            ratio = difflib.SequenceMatcher(None, norm_pattern, chunk).ratio()
+            if ratio > best:
+                best = ratio
+    return best
+
+
+def classify_fraud_text(text: str) -> dict:
+    """판매자 메시지 → 사기 패턴 카테고리별 유사도 매칭 (공백 무시 + 오타 허용)"""
+    norm_text = _normalize(text)
+
+    matched = []
+    score = 0.0
+    for cat in FRAUD_CATEGORIES:
+        best_conf = max(_best_match_ratio(norm_text, _normalize(p)) for p in cat["patterns"])
+        if best_conf >= FUZZY_MATCH_THRESHOLD:
+            matched.append({"key": cat["key"], "weight": cat["weight"], "confidence": round(best_conf, 3)})
+            score += cat["weight"] * best_conf
+    matched.sort(key=lambda m: m["confidence"], reverse=True)
+    score = round(min(100, score))
+
+    if score >= 60:
+        level = "danger"
+    elif score >= 30:
+        level = "caution"
+    elif score > 0:
+        level = "low"
+    else:
+        level = "safe"
+
+    return {"level": level, "score": score, "categories": matched}
+
+
 # ── 임베딩 DB 로드 ───────────────────────────────────────────────
 CORRECTIONS_PATH = OUTPUT_DIR / "user_corrections.npz"
 
@@ -519,6 +589,20 @@ async def _get_image_embedding(image: PILImage.Image) -> Optional[np.ndarray]:
     return await loop.run_in_executor(None, _infer)
 
 
+# ── 임베딩 DB 기반 브랜드 분류 (이미지 프로토타입, 사용자 보정 반영) ──
+def _classify_brand_from_prototypes(query_emb: np.ndarray) -> Optional[tuple[str, float]]:
+    """
+    _brand_text_embeddings(임베딩 DB 평균 이미지 프로토타입)와 비교해 최상위 브랜드 반환.
+    add_embedding()으로 추가된 사용자 보정 데이터도 즉시 반영되므로,
+    zero-shot 텍스트 분류보다 우선 사용해야 학습(보정)이 다음 인식에 실제로 적용된다.
+    """
+    if not _brand_text_embeddings:
+        return None
+    scores = {brand: float(np.dot(query_emb, emb)) for brand, emb in _brand_text_embeddings.items()}
+    best_brand, best_score = max(scores.items(), key=lambda x: x[1])
+    return best_brand, best_score
+
+
 # ── 정품 진위 분석 ───────────────────────────────────────────────
 _AUTHENTICITY_PROMPTS = {
     "logo": {
@@ -641,7 +725,9 @@ async def verify_authenticity(image_bytes: bytes) -> dict:
         # softmax-style 정규화 → Pass 확률 (%)
         exp_a, exp_f = np.exp(auth_score * 10), np.exp(fake_score * 10)
         pass_pct = round(float(exp_a / (exp_a + exp_f)) * 100, 1)
-        passed = pass_pct >= 65.0
+        # auth/fake 텍스트 임베딩과의 유사도 차가 실제로는 1%p 내외로 작아서,
+        # 65% 기준은 진품 사진도 거의 항상 Fail로 만듦. 50%(=fake보다 authentic에 더 가까움)로 완화.
+        passed = pass_pct >= 50.0
         checks[key] = {"label": data["label"], "score": pass_pct, "passed": passed}
         print(f"[ReCheck] {data['label']}: auth={auth_score:.4f} fake={fake_score:.4f} → {pass_pct}% ({'Pass' if passed else 'Fail'})")
 
@@ -834,18 +920,24 @@ async def detect_and_classify(image_bytes: bytes) -> dict:
                 "message": f"AI가 '{hit_brand} {hit_model}'으로 추측했습니다. (신뢰도 {int(confidence * 100)}%)"
             }
 
-    # ── 브랜드 분류: Zero-shot CLIP (이미지 vs 텍스트 설명) ─────────
-    # 임베딩 DB 없이도 작동하는 기본 경로
-    brand = await _classify_brand_zeroshot(query_emb)
+    # ── 브랜드 분류 ──────────────────────────────────────────────
+    # ① 임베딩 DB(사용자 보정 데이터 포함) 이미지 프로토타입이 있으면 우선 사용
+    #    → 사용자가 수정한 브랜드/모델이 다음 인식에 실제로 반영됨
+    # ② 프로토타입이 없으면(DB 비어있음) zero-shot 텍스트 분류로 fallback
+    proto_match = _classify_brand_from_prototypes(query_emb)
+    if proto_match:
+        detected_brand_ko, _proto_score = proto_match
+        brand = BRAND_KO_TO_EN.get(detected_brand_ko, detected_brand_ko)
+    else:
+        brand = await _classify_brand_zeroshot(query_emb)
+        detected_brand_ko = next(
+            (ko for ko, en in BRAND_KO_TO_EN.items() if en == brand), brand
+        ) if brand else None
 
     # 임베딩 DB가 있으면 해당 브랜드 내 모델 검색, 없으면 모델명 None
     top3: list[dict] = []
     model_confident = False
-    if brand and _embeddings is not None and len(_embeddings) > 0:
-        # DB에서 브랜드 프로토타입으로 재확인 후 모델 검색
-        detected_brand_ko = next(
-            (ko for ko, en in BRAND_KO_TO_EN.items() if en == brand), brand
-        )
+    if brand and detected_brand_ko and _embeddings is not None and len(_embeddings) > 0:
         top3, model_confident = _search_model_in_brand(query_emb, detected_brand_ko, top_k=3)
         for item in top3:
             item["brand"] = BRAND_KO_TO_EN.get(item["brand"], item["brand"])

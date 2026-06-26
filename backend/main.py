@@ -7,9 +7,14 @@ import sys
 import hashlib
 import math
 import random
+
+# Windows 콘솔(cp949)이 이모지/특수문자(em-dash 등) 출력 시 죽는 것 방지
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 
-from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding, assess_condition, verify_authenticity
+from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding, assess_condition, verify_authenticity, classify_fraud_text
 
 from database import save_training_data, get_db_stats
 from price_history import get_history, get_latest_price, save_prices
@@ -941,3 +946,16 @@ async def check_url(payload: UrlCheckPayload):
         "domain": domain,
         "connect_status": connect_status,
     }
+
+
+# ── 판매자 화법 사기 탐지 (오타·띄어쓰기 허용 유사도 매칭) ────────
+class TextAnalyzePayload(BaseModel):
+    text: str
+
+
+@app.post("/api/analyze-text")
+async def analyze_text(payload: TextAnalyzePayload):
+    text = payload.text.strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="텍스트를 입력해 주세요.")
+    return classify_fraud_text(text)
