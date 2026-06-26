@@ -849,6 +849,7 @@
     .trust-card .tc-value { font-size: 13px; font-weight: 600; margin-top: 4px; }
     .trust-card .tc-value.ok  { color: #4dffc3; }
     .trust-card .tc-value.no  { color: #ff4d6a; }
+    .trust-card .tc-value.estimate { color: #ffd166; }
 
     .url-input-row {
       display: flex;
@@ -1563,10 +1564,17 @@
     document.getElementById('pcSignal').textContent = signal ?? '';
 
     // 가격 카드
-    document.getElementById('pcMarketPrice').textContent = market_price != null
-      ? `₩${Math.round(market_price/10000).toLocaleString()}만` : '—';
-    document.getElementById('pcFairRange').textContent = (fair_min != null && fair_max != null)
-      ? `₩${Math.round(fair_min/10000).toLocaleString()}만 ~ ₩${Math.round(fair_max/10000).toLocaleString()}만` : '—';
+    const isEstimate = data_source === 'AI 추정';
+    const estimateSuffix = isEstimate ? ' (추정값)' : '';
+    const marketEl = document.getElementById('pcMarketPrice');
+    marketEl.textContent = market_price != null
+      ? `₩${Math.round(market_price/10000).toLocaleString()}만${estimateSuffix}` : '—';
+    marketEl.className = 'tc-value' + (isEstimate ? ' estimate' : ' ok');
+
+    const fairEl = document.getElementById('pcFairRange');
+    fairEl.textContent = (fair_min != null && fair_max != null)
+      ? `₩${Math.round(fair_min/10000).toLocaleString()}만 ~ ₩${Math.round(fair_max/10000).toLocaleString()}만${estimateSuffix}` : '—';
+    fairEl.className = 'tc-value' + (isEstimate ? ' estimate' : ' ok');
 
     const askEl = document.getElementById('pcAskingPrice');
     askEl.textContent = asking_price != null ? `₩${Math.round(asking_price/10000).toLocaleString()}만` : '—';
@@ -1587,7 +1595,9 @@
       ? (buy_save > 0 ? `지금보다 ${buy_save}% 저렴하게 살 수 있음` : `지금이 최적 구매 시점`)
       : '—';
 
-    document.getElementById('pcSource').textContent = data_source ? `시세 출처: ${data_source}` : '';
+    const sourceEl = document.getElementById('pcSource');
+    sourceEl.textContent = data_source ? `시세 출처: ${data_source}` : '';
+    sourceEl.style.color = isEstimate ? '#ffd166' : data_source ? '#4dffc3' : '';
   }
 
   function resetPriceCheck() {
@@ -2126,8 +2136,9 @@
 
     // ── 데이터 소스 태그 ─────────────────────────────────────
     const tag = $('dataSourceTag');
-    tag.textContent = data.data_source || 'AI 추정';
-    tag.className = 'datasource-tag' + (data.data_source === 'Kream 실시간' ? ' live' : '');
+    const isLive = ['KREAM 실시간', '번개장터 실시간', 'Kream+실거래'].includes(data.data_source);
+    tag.textContent = data.data_source === 'AI 추정' ? 'AI 추정값' : (data.data_source || 'AI 추정값');
+    tag.className = 'datasource-tag' + (isLive ? ' live' : '');
 
     // ── 최적 시점 바 ─────────────────────────────────────────
     $('optimalBar').className = `optimal-bar ${isSell ? 'sell-mode' : 'buy-mode'}`;
