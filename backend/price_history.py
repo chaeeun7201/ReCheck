@@ -27,6 +27,17 @@ CREATE TABLE IF NOT EXISTS price_history (
 );
 CREATE INDEX IF NOT EXISTS idx_ph_brand ON price_history (brand);
 CREATE INDEX IF NOT EXISTS idx_ph_sold_at ON price_history (sold_at);
+
+CREATE TABLE IF NOT EXISTS image_fingerprints (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    phash         TEXT    NOT NULL,
+    clip_embedding BLOB   NOT NULL,
+    listing_url   TEXT    DEFAULT '',
+    brand         TEXT    DEFAULT '',
+    model_name    TEXT    DEFAULT '',
+    analyzed_at   TEXT    DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_fp_at ON image_fingerprints (analyzed_at);
 """
 
 

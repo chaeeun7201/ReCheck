@@ -14,7 +14,10 @@ sys.stderr.reconfigure(encoding="utf-8")
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'AI'))
 
-from detector import detect_and_classify, BRAND_KO_TO_EN, _translate_model_name, add_embedding, assess_condition, verify_authenticity, classify_fraud_text
+from detector import (detect_and_classify, BRAND_KO_TO_EN, _translate_model_name,
+                      add_embedding, assess_condition, verify_authenticity,
+                      classify_fraud_text, detect_ai_image,
+                      check_duplicate_image, store_image_fingerprint)
 
 from database import save_training_data, get_db_stats
 from price_history import get_history, get_latest_price, save_prices
@@ -959,3 +962,34 @@ async def analyze_text(payload: TextAnalyzePayload):
     if not text:
         raise HTTPException(status_code=400, detail="텍스트를 입력해 주세요.")
     return classify_fraud_text(text)
+
+
+_DB_PATH = os.path.join(os.path.dirname(__file__), "recheck_prices.db")
+
+
+@app.post("/api/detect-ai-image")
+async def detect_ai_image_api(file: UploadFile = File(...)):
+    """업로드 이미지가 AI 생성인지 판별"""
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="이미지 파일만 업로드 가능합니다.")
+    contents = await file.read()
+    return await detect_ai_image(contents)
+
+
+@app.post("/api/check-duplicate")
+async def check_duplicate_api(
+    file: UploadFile = File(...),
+    brand: str = "",
+    model_name: str = "",
+    listing_url: str = "",
+):
+    """동일/유사 이미지가 ReCheck에서 이전에 분석된 적 있는지 확인 후 지문 저장"""
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="이미지 파일만 업로드 가능합니다.")
+    contents = await file.read()
+    result = await check_duplicate_image(contents, _DB_PATH)
+    await store_image_fingerprint(contents, _DB_PATH,
+                                  listing_url=listing_url,
+                                  brand=brand,
+                                  model_name=model_name)
+    return result

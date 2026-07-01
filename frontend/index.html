@@ -12,18 +12,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0a1120;
-      --surface:   #0f1d2e;
-      --surface2:  #162338;
-      --border:    #1e3452;
-      --mint:      #4dffc3;
-      --mint-dim:  #1a9e78;
-      --red:       #ff4d6a;
-      --yellow:    #ffd166;
-      --text:      #e8f4f0;
-      --text-muted:#7a9abf;
+      --bg:        #f5f8ff;
+      --surface:   #ffffff;
+      --surface2:  #eef2fb;
+      --border:    #d8e1f5;
+      --mint:      #0d9488;
+      --mint-dim:  #0f766e;
+      --red:       #dc2626;
+      --yellow:    #d97706;
+      --text:      #0f172a;
+      --text-muted:#6b7ea8;
       --radius:    14px;
-      --shadow:    0 4px 32px rgba(0,0,0,.5);
+      --shadow:    0 4px 20px rgba(15,23,42,.07);
     }
 
     html, body {
@@ -48,11 +48,12 @@
       align-items: center;
       gap: 12px;
       border-bottom: 1px solid var(--border);
-      background: rgba(10,17,32,.8);
-      backdrop-filter: blur(8px);
+      background: rgba(245,248,255,.96);
+      backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 1px 12px rgba(15,23,42,.06);
     }
 
     .logo {
@@ -228,7 +229,7 @@
       color: var(--bg);
     }
 
-    .btn-primary:hover { background: #6fffd5; transform: translateY(-1px); }
+    .btn-primary:hover { background: #14b8a6; transform: translateY(-1px); }
     .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
 
     .btn-ghost {
@@ -580,10 +581,10 @@
     .mode-btn.active {
       background: var(--surface);
       color: var(--text);
-      box-shadow: 0 1px 6px rgba(0,0,0,.4);
+      box-shadow: 0 1px 6px rgba(15,23,42,.1);
     }
-    .mode-btn.active.sell { color: #ff7a8a; }
-    .mode-btn.active.buy  { color: #4dffc3; }
+    .mode-btn.active.sell { color: var(--red); }
+    .mode-btn.active.buy  { color: var(--mint); }
 
     /* 현재 시세 + 변동 */
     .price-block {
@@ -870,16 +871,347 @@
     }
     .url-input:focus { border-color: var(--mint); }
     .url-input::placeholder { color: var(--text-muted); }
+
+    /* ── 반응형 기본 ────────────────────────────────────── */
+    @media (max-width: 768px) {
+      main { padding: 24px 16px 80px; }
+      header { padding: 14px 16px; gap: 8px; }
+      .stats-badge { display: none; }
+    }
+
+    /* ── 랜딩 페이지 ─────────────────────────────────────── */
+    #homePage { min-height: 100vh; background: var(--bg); overflow-x: hidden; }
+    #appPage  { min-height: 100vh; }
+
+    .rc-logo-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, #0d9488, #0ea5e9);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif; font-size: 13px;
+      font-weight: 800; color: #ffffff; flex-shrink: 0;
+      letter-spacing: -.5px;
+    }
+    .rc-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 48px;
+      background: rgba(245,248,255,.97); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 12px rgba(15,23,42,.06);
+    }
+    .rc-nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700;
+      color: var(--text);
+    }
+    .rc-nav-actions { display: flex; gap: 10px; align-items: center; }
+    .rc-btn-ghost {
+      padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border);
+      background: transparent; color: var(--text); font-size: 14px; cursor: pointer;
+      font-family: inherit; transition: border-color .2s, color .2s;
+    }
+    .rc-btn-ghost:hover { border-color: var(--mint); color: var(--mint); }
+    .rc-btn-primary {
+      padding: 8px 20px; border-radius: 20px; border: none;
+      background: var(--mint); color: #08111e; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: opacity .2s;
+    }
+    .rc-btn-primary:hover { opacity: .85; }
+
+    .rc-hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px; position: relative; overflow: hidden;
+    }
+    .rc-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 90% 60% at 50% 40%, rgba(13,148,136,.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .rc-hero-inner { position: relative; z-index: 1; max-width: 720px; }
+    .rc-hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 18px; border-radius: 24px;
+      border: 1px solid rgba(13,148,136,.25); background: rgba(13,148,136,.07);
+      color: var(--mint); font-size: 13px; font-weight: 500; margin-bottom: 32px;
+      letter-spacing: .04em;
+    }
+    .rc-hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(72px, 16vw, 128px); font-weight: 700; line-height: 1;
+      background: linear-gradient(135deg, var(--text) 20%, var(--mint) 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 20px;
+    }
+    .rc-hero-tagline {
+      font-size: clamp(17px, 3.5vw, 24px); font-weight: 600;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .rc-hero-desc {
+      font-size: 15px; color: var(--text-muted); line-height: 1.85; margin-bottom: 44px;
+    }
+    .rc-hero-cta {
+      display: inline-block; padding: 16px 44px; border-radius: 50px; border: none;
+      background: linear-gradient(135deg, var(--mint) 0%, #0ea5e9 100%);
+      color: #ffffff; font-size: 16px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(13,148,136,.25);
+    }
+    .rc-hero-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(13,148,136,.35); }
+
+    .rc-features { padding: 0 24px 100px; max-width: 1000px; margin: 0 auto; }
+    .rc-features-title {
+      text-align: center; font-size: 22px; font-weight: 700;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .rc-features-sub {
+      text-align: center; font-size: 14px; color: var(--text-muted); margin-bottom: 40px;
+    }
+    .rc-features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
+    .rc-feat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 28px 24px; cursor: pointer;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      position: relative; overflow: hidden;
+    }
+    .rc-feat-card::before {
+      content: ''; position: absolute; inset: 0; opacity: 0;
+      background: linear-gradient(135deg, rgba(13,148,136,.04), transparent);
+      transition: opacity .3s;
+    }
+    .rc-feat-card:hover::before { opacity: 1; }
+    .rc-feat-card:hover:not(.rc-feat-coming) {
+      border-color: rgba(13,148,136,.3); transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(15,23,42,.1);
+    }
+    .rc-feat-card.rc-feat-coming { opacity: .55; cursor: default; }
+    .rc-feat-icon { font-size: 34px; margin-bottom: 14px; }
+    .rc-feat-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .rc-feat-desc { font-size: 13px; color: var(--text-muted); line-height: 1.75; margin-bottom: 18px; }
+    .rc-feat-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .rc-feat-tags span {
+      padding: 3px 10px; border-radius: 10px;
+      background: rgba(13,148,136,.08); border: 1px solid rgba(13,148,136,.2);
+      color: var(--mint); font-size: 11px; font-weight: 500;
+    }
+    .rc-feat-soon {
+      position: absolute; top: 16px; right: 16px; padding: 3px 10px; border-radius: 10px;
+      background: rgba(255,209,102,.09); border: 1px solid rgba(255,209,102,.25);
+      color: var(--yellow); font-size: 11px; font-weight: 600;
+    }
+    .rc-feat-arrow {
+      position: absolute; bottom: 20px; right: 22px; font-size: 18px;
+      color: var(--mint); opacity: 0; transition: opacity .2s;
+    }
+    .rc-feat-card:hover:not(.rc-feat-coming) .rc-feat-arrow { opacity: 1; }
+
+    .rc-back-btn {
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-muted); padding: 6px 14px; font-size: 13px;
+      cursor: pointer; font-family: inherit; transition: color .2s, border-color .2s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .rc-back-btn:hover { color: var(--mint); border-color: var(--mint); }
+
+    /* 로그인/회원가입 모달 */
+    .rc-modal-overlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,.5);
+      backdrop-filter: blur(6px); display: flex; align-items: center;
+      justify-content: center; z-index: 1000; padding: 20px;
+    }
+    .rc-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px 32px; width: 100%; max-width: 400px;
+      position: relative; animation: fadeUp .25s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .rc-modal-close {
+      position: absolute; top: 14px; right: 14px;
+      background: transparent; border: none; color: var(--text-muted);
+      font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 6px;
+      transition: color .2s;
+    }
+    .rc-modal-close:hover { color: var(--text); }
+    .rc-modal-logo {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;
+      color: var(--text); text-align: center; margin-bottom: 4px;
+    }
+    .rc-modal-slogan { text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+    .rc-modal-tabs {
+      display: flex; gap: 4px; background: var(--surface2);
+      border-radius: 11px; padding: 4px; margin-bottom: 22px;
+    }
+    .rc-modal-tab {
+      flex: 1; padding: 9px; border-radius: 8px; border: none;
+      background: transparent; color: var(--text-muted); font-size: 14px;
+      font-weight: 500; cursor: pointer; font-family: inherit;
+      transition: background .2s, color .2s;
+    }
+    .rc-modal-tab.active { background: var(--mint); color: #ffffff; font-weight: 700; }
+    .rc-modal-input {
+      display: block; width: 100%; padding: 13px 16px; margin-bottom: 10px;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); font-size: 14px;
+      font-family: inherit; outline: none; transition: border-color .2s;
+    }
+    .rc-modal-input:focus { border-color: var(--mint); }
+    .rc-modal-input::placeholder { color: var(--text-muted); }
+    .rc-modal-submit {
+      display: block; width: 100%; padding: 14px; margin-top: 6px; border-radius: 11px;
+      border: none; background: linear-gradient(135deg, var(--mint), #0ea5e9);
+      color: #ffffff; font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: opacity .2s;
+    }
+    .rc-modal-submit:hover { opacity: .88; }
+    .rc-modal-hint { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 16px; }
+    .rc-modal-hint a { color: var(--mint); cursor: pointer; }
+
+    @media (max-width: 640px) {
+      .rc-nav { padding: 14px 20px; }
+      .rc-features-grid { grid-template-columns: 1fr; }
+      .rc-features { padding: 0 16px 80px; }
+      .rc-hero { padding: 100px 20px 60px; }
+      .rc-modal { padding: 28px 20px; }
+    }
   </style>
 </head>
 <body>
+
+<!-- ══════════════ 랜딩 페이지 ══════════════ -->
+<div id="homePage">
+
+  <nav class="rc-nav">
+    <div class="rc-nav-logo">
+      <div class="rc-logo-icon">RC</div>
+      ReCheck
+    </div>
+    <div class="rc-nav-actions">
+      <button class="rc-btn-ghost" onclick="openAuth('login')">로그인</button>
+      <button class="rc-btn-primary" onclick="openAuth('signup')">회원가입</button>
+    </div>
+  </nav>
+
+  <section class="rc-hero">
+    <div class="rc-hero-inner">
+      <div class="rc-hero-badge">✦ AI 기반 중고거래 보조 서비스</div>
+      <h1 class="rc-hero-title">ReCheck</h1>
+      <p class="rc-hero-tagline">중고거래 전, ReCheck 먼저</p>
+      <p class="rc-hero-desc">
+        사진 한 장으로 시세 분석 · 사기 탐지 · 상태 등급까지<br>
+        30초 안에 확인하세요
+      </p>
+      <button class="rc-hero-cta" onclick="goToFeature('scanner')">무료로 시작하기 →</button>
+    </div>
+  </section>
+
+  <section class="rc-features">
+    <p class="rc-features-title">ReCheck이 제공하는 기능</p>
+    <p class="rc-features-sub">중고거래에서 필요한 모든 것을 한곳에서</p>
+    <div class="rc-features-grid">
+
+      <div class="rc-feat-card" onclick="goToFeature('scanner')">
+        <div class="rc-feat-icon">📸</div>
+        <div class="rc-feat-title">물품 스캐너</div>
+        <div class="rc-feat-desc">
+          사진 업로드 한 번으로 AI가 브랜드·모델을 자동 인식하고
+          S~C 상태 등급을 부여합니다. 가품 의심 패턴도 함께 감지합니다.
+        </div>
+        <div class="rc-feat-tags">
+          <span>브랜드 자동 인식</span><span>상태 등급</span><span>가품 의심 탐지</span>
+        </div>
+        <div class="rc-feat-arrow">→</div>
+      </div>
+
+      <div class="rc-feat-card" onclick="goToFeature('fraud')">
+        <div class="rc-feat-icon">💰</div>
+        <div class="rc-feat-title">시세 &amp; 가격 분석</div>
+        <div class="rc-feat-desc">
+          KREAM 실시간 시세와 판매가를 비교해 적정가 여부를 판단합니다.
+          구매·판매 최적 타이밍 가이드와 시세 차트도 제공합니다.
+        </div>
+        <div class="rc-feat-tags">
+          <span>실시간 시세</span><span>최적가 가이드</span><span>시세 차트</span>
+        </div>
+        <div class="rc-feat-arrow">→</div>
+      </div>
+
+      <div class="rc-feat-card" onclick="goToFeature('fraud')">
+        <div class="rc-feat-icon">🚨</div>
+        <div class="rc-feat-title">사기 탐지</div>
+        <div class="rc-feat-desc">
+          판매 링크·채팅 화법·AI 생성 사진·동일 이미지 반복 게시를
+          복합 분석해 사기 위험 신호를 잡아냅니다.
+        </div>
+        <div class="rc-feat-tags">
+          <span>판매글 분석</span><span>화법 분석</span><span>AI 이미지 판별</span><span>이미지 중복 탐지</span>
+        </div>
+        <div class="rc-feat-arrow">→</div>
+      </div>
+
+      <div class="rc-feat-card rc-feat-coming">
+        <div class="rc-feat-icon">⭐</div>
+        <div class="rc-feat-title">판매자 신뢰도</div>
+        <div class="rc-feat-desc">
+          거래 후기·계정 나이·신고 이력을 종합한 판매자 신뢰 점수와
+          브랜드별 정품 시리얼 검증 기능을 준비 중입니다.
+        </div>
+        <div class="rc-feat-tags">
+          <span>후기 분석</span><span>신뢰 점수</span><span>시리얼 검증</span>
+        </div>
+        <div class="rc-feat-soon">준비 중</div>
+      </div>
+
+    </div>
+  </section>
+
+</div><!-- /homePage -->
+
+<!-- ══════════════ 로그인 모달 ══════════════ -->
+<div id="loginModal" class="rc-modal-overlay hidden" onclick="closeAuth(event)">
+  <div class="rc-modal">
+    <button class="rc-modal-close" onclick="closeAuthBtn()">✕</button>
+    <div class="rc-modal-logo">
+      <div class="rc-logo-icon" style="width:28px;height:28px;font-size:11px;">RC</div>
+      ReCheck
+    </div>
+    <div class="rc-modal-slogan">중고거래 전, ReCheck 먼저</div>
+    <div class="rc-modal-tabs">
+      <button class="rc-modal-tab active" id="tabAuthLogin" onclick="switchAuth('login')">로그인</button>
+      <button class="rc-modal-tab" id="tabAuthSignup" onclick="switchAuth('signup')">회원가입</button>
+    </div>
+    <div id="authLogin">
+      <input type="email" placeholder="이메일" class="rc-modal-input" />
+      <input type="password" placeholder="비밀번호" class="rc-modal-input" />
+      <button class="rc-modal-submit">로그인</button>
+      <p class="rc-modal-hint">계정이 없으신가요? <a onclick="switchAuth('signup')">회원가입</a></p>
+    </div>
+    <div id="authSignup" class="hidden">
+      <input type="text" placeholder="닉네임" class="rc-modal-input" />
+      <input type="email" placeholder="이메일" class="rc-modal-input" />
+      <input type="password" placeholder="비밀번호 (8자 이상)" class="rc-modal-input" />
+      <input type="password" placeholder="비밀번호 확인" class="rc-modal-input" />
+      <button class="rc-modal-submit">회원가입</button>
+      <p class="rc-modal-hint">이미 계정이 있으신가요? <a onclick="switchAuth('login')">로그인</a></p>
+    </div>
+  </div>
+</div><!-- /loginModal -->
+
+<!-- ══════════════ 앱 페이지 ══════════════ -->
+<div id="appPage" class="hidden">
 <div class="app">
 
   <!-- 헤더 -->
   <header>
-    <div>
-      <div class="logo">ReCheck</div>
-      <div class="logo-sub">AI 상품 스캐너</div>
+    <button class="rc-back-btn" onclick="goHome()">← 홈</button>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="rc-logo-icon">RC</div>
+      <div>
+        <div class="logo">ReCheck</div>
+        <div class="logo-sub">AI 상품 스캐너</div>
+      </div>
     </div>
     <div class="stats-badge" id="statsBadge">
       학습 데이터 <span id="statsTotal">0</span>개 축적
@@ -1326,7 +1658,8 @@
     </div>
 
   </main>
-</div>
+</div><!-- /app -->
+</div><!-- /appPage -->
 
 <script>
   const API = 'http://localhost:8000'; // 백엔드 주소 (배포 시 교체)
@@ -1666,15 +1999,25 @@
     // 링크로 이미 채운 경우: 상태 평가만, 브랜드/모델 AI인식 생략
     const fd = new FormData(); fd.append('file', file);
 
-    let detectData = null, cond;
+    let detectData = null, cond, aiImageResult = null, dupResult = null;
     try {
+      const fd2 = new FormData(); fd2.append('file', file);
+      const fd3 = new FormData(); fd3.append('file', file);
+      const fd4 = new FormData(); fd4.append('file', file);
+
+      const aiImagePromise = fetch(`${API}/api/detect-ai-image`, { method: 'POST', body: fd3 }).then(r => r.json()).catch(() => null);
+      const dupPromise     = fetch(`${API}/api/check-duplicate`,  { method: 'POST', body: fd4 }).then(r => r.json()).catch(() => null);
+
       if (listingLoaded) {
-        cond = await fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd }).then(r => r.json());
+        [cond, aiImageResult, dupResult] = await Promise.all([
+          fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd }).then(r => r.json()),
+          aiImagePromise, dupPromise,
+        ]);
       } else {
-        const fd2 = new FormData(); fd2.append('file', file);
-        [detectData, cond] = await Promise.all([
+        [detectData, cond, aiImageResult, dupResult] = await Promise.all([
           fetch(`${API}/api/detect`,           { method: 'POST', body: fd  }).then(r => r.json()),
           fetch(`${API}/api/assess-condition`, { method: 'POST', body: fd2 }).then(r => r.json()),
+          aiImagePromise, dupPromise,
         ]);
       }
     } catch (e) {
@@ -1734,8 +2077,50 @@
           </div>`;
       }
 
+      // AI 생성 이미지 경고 카드
+      let aiImageCard = '';
+      if (aiImageResult && aiImageResult.level !== 'unknown') {
+        const aiProb = aiImageResult.ai_probability;
+        const aiColor = aiImageResult.level === 'danger' ? '#ff4d6a' : aiImageResult.level === 'caution' ? '#ffd166' : '#4dffc3';
+        const aiIcon  = aiImageResult.level === 'danger' ? '🚨' : aiImageResult.level === 'caution' ? '⚠️' : '✅';
+        const aiMsg   = aiImageResult.level === 'danger'
+          ? `AI 생성 이미지 가능성 높음 (${aiProb}%) — 실제 상품 사진이 아닐 수 있습니다`
+          : aiImageResult.level === 'caution'
+          ? `AI 생성 이미지 가능성 있음 (${aiProb}%) — 추가 확인 권장`
+          : `실제 촬영 사진으로 판단됨 (AI 생성 가능성 ${aiProb}%)`;
+        aiImageCard = `
+          <div style="display:flex; align-items:center; gap:10px; padding:10px 14px;
+                      background:var(--surface2); border:1px solid ${aiColor}33;
+                      border-radius:10px; margin-bottom:10px;">
+            <span style="font-size:18px;">${aiIcon}</span>
+            <div>
+              <div style="font-size:12px; font-weight:700; color:${aiColor};">AI 이미지 판별</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${aiMsg}</div>
+            </div>
+          </div>`;
+      }
+
+      // 중복 이미지 경고 카드
+      let dupCard = '';
+      if (dupResult?.is_duplicate) {
+        const dupTime = dupResult.analyzed_at ? dupResult.analyzed_at.split(' ')[0] : '';
+        dupCard = `
+          <div style="display:flex; align-items:center; gap:10px; padding:10px 14px;
+                      background:var(--surface2); border:1px solid #ff4d6a55;
+                      border-radius:10px; margin-bottom:10px;">
+            <span style="font-size:18px;">🔁</span>
+            <div>
+              <div style="font-size:12px; font-weight:700; color:#ff4d6a;">동일 이미지 재사용 탐지</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                이전에 분석된 이미지와 ${dupResult.similarity}% 일치${dupTime ? ` (${dupTime})` : ''}
+                ${dupResult.brand ? ` — ${dupResult.brand} ${dupResult.model_name || ''}` : ''}
+              </div>
+            </div>
+          </div>`;
+      }
+
       resultEl.innerHTML = `
-        ${detectedInfo}
+        ${dupCard}${aiImageCard}${detectedInfo}
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
           <span style="font-size:15px; font-weight:700; color:${color};">${grade}등급 — ${label}</span>
           ${mode === 'mock' ? '<span style="font-size:10px; color:var(--text-muted);">Mock</span>' : ''}
@@ -2336,13 +2721,13 @@
         },
         scales: {
           x: {
-            grid: { color: 'rgba(30,52,82,.5)', drawTicks: false },
-            ticks: { color: '#7a9abf', font: { size: 11 }, maxRotation: 0 },
+            grid: { color: 'rgba(15,23,42,.07)', drawTicks: false },
+            ticks: { color: '#6b7ea8', font: { size: 11 }, maxRotation: 0 },
           },
           y: {
-            grid: { color: 'rgba(30,52,82,.5)', drawTicks: false },
+            grid: { color: 'rgba(15,23,42,.07)', drawTicks: false },
             ticks: {
-              color: '#7a9abf',
+              color: '#6b7ea8',
               font: { size: 11 },
               callback: v => `₩${v.toLocaleString()}만`,
             },
@@ -2356,6 +2741,39 @@
   function formatPrice(won) {
     const man = Math.round(won / 10000);
     return `₩${man.toLocaleString()}만`;
+  }
+
+  // ── 랜딩 ↔ 앱 전환 ─────────────────────────────────────
+  function goHome() {
+    document.getElementById('homePage').classList.remove('hidden');
+    document.getElementById('appPage').classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToFeature(tab) {
+    document.getElementById('homePage').classList.add('hidden');
+    document.getElementById('appPage').classList.remove('hidden');
+    switchTab(tab);
+    window.scrollTo({ top: 0 });
+  }
+
+  // ── 로그인/회원가입 모달 ──────────────────────────────────
+  function openAuth(mode) {
+    document.getElementById('loginModal').classList.remove('hidden');
+    switchAuth(mode || 'login');
+  }
+  function closeAuth(e) {
+    if (e.target.id === 'loginModal') closeAuthBtn();
+  }
+  function closeAuthBtn() {
+    document.getElementById('loginModal').classList.add('hidden');
+  }
+  function switchAuth(mode) {
+    const isLogin = mode === 'login';
+    document.getElementById('authLogin').classList.toggle('hidden', !isLogin);
+    document.getElementById('authSignup').classList.toggle('hidden', isLogin);
+    document.getElementById('tabAuthLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabAuthSignup').classList.toggle('active', !isLogin);
   }
 </script>
 </body>
